@@ -33,7 +33,7 @@ class ofApp : public ofBaseApp {
 	    int polyN;
 	    float polySigma;
 	    bool OPTFLOW_FARNEBACK_GAUSSIAN;
-	    bool useFarneback;
+	    //bool useFarneback;
 	    int winSize;
 	    int maxLevel;
 	    int maxFeatures;
@@ -43,7 +43,7 @@ class ofApp : public ofBaseApp {
 	    float triggerThreshold;
 	    int timeDelay;
 	    int markTime;
-	    bool timeTriggered;
+	    bool trigger;
 	    float avgMotion;
 
 		ofxCvPiCam cam;

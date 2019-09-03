@@ -42,7 +42,7 @@ void ofApp::setup() {
     triggerThreshold = settings.getValue("settings:trigger_threshold", 0.5);
     timeDelay = settings.getValue("settings:time_delay", 5000);
     markTime = 0;
-    timeTriggered = false;
+    trigger = false;
 
     camSharpness = settings.getValue("settings:sharpness", 0); 
     camContrast = settings.getValue("settings:contrast", 0); 
@@ -68,7 +68,7 @@ void ofApp::setup() {
     polyN = 7;   // 5 to 10
     polySigma = 1.5;   // 1.1 to 2
     OPTFLOW_FARNEBACK_GAUSSIAN = false;
-    useFarneback = true;
+    //useFarneback = true;
     winSize = 32;   // 4 to 64
     maxLevel = 3;   // 0 to 8
     maxFeatures = 200;   // 1 to 1000
@@ -79,24 +79,26 @@ void ofApp::setup() {
 }
 
 void ofApp::update() {
-	if (timeTriggered && ofGetElapsedTimeMillis() > markTime + timeDelay) {
-		timeTriggered = false;
+    int t = ofGetElapsedTimeMillis();
+
+	if (trigger && t > markTime + timeDelay) {
+		trigger = false;
 	    sendOsc(0);
 	}
 
     frame = cam.grab();
 
     if (!frame.empty()) {
-        if (useFarneback) {
-			curFlow = &farneback;
-            farneback.setPyramidScale( pyrScale );
-            farneback.setNumLevels( levels );
-            farneback.setWindowSize( winsize );
-            farneback.setNumIterations( iterations );
-            farneback.setPolyN( polyN );
-            farneback.setPolySigma( polySigma );
-            farneback.setUseGaussian( OPTFLOW_FARNEBACK_GAUSSIAN );
-		} 
+        //if (useFarneback) {
+		curFlow = &farneback;
+        farneback.setPyramidScale( pyrScale );
+        farneback.setNumLevels( levels );
+        farneback.setWindowSize( winsize );
+        farneback.setNumIterations( iterations );
+        farneback.setPolyN( polyN );
+        farneback.setPolySigma( polySigma );
+        farneback.setUseGaussian( OPTFLOW_FARNEBACK_GAUSSIAN );
+		//} 
 		/*
 		else {
 			curFlow = &pyrLk;
@@ -110,21 +112,19 @@ void ofApp::update() {
         //check it out that that you can use Flow polymorphically
         curFlow->calcOpticalFlow(frame);
 
-       	if (useFarneback) {
-	    	ofVec2f avgRaw = farneback.getAverageFlow();
-	    	avgMotion = (abs(avgRaw.x) + abs(avgRaw.y)) / 2.0;
-	    	bool trigger = avgMotion > triggerThreshold;
-	    	std::cout << "avg: " << avgMotion << " trigger: " <<  trigger << "\n";
-	    	
-	    	if (trigger) {
-	    		if (!timeTriggered) {
-	    		    timeTriggered = true;
-                    sendOsc(1);
-                }
-                
-	    		markTime = ofGetElapsedTimeMillis();
-	    	}
-	    }
+       	//if (useFarneback) {
+    	ofVec2f avgRaw = farneback.getAverageFlow();
+    	avgMotion = (abs(avgRaw.x) + abs(avgRaw.y)) / 2.0;
+    	bool isMoving = avgMotion > triggerThreshold;
+    	std::cout << "avg: " << avgMotion << " motion: " << isMoving << "\n";
+    	
+    	if (isMoving) {
+    		markTime = t;
+            if (!trigger) {
+                trigger = true;
+                sendOsc(1);      
+            }
+    	}
     }
 }
 
