@@ -79,21 +79,21 @@ void ofApp::update() {
     if (!frame.empty()) {
         if(useFarneback.get()) {
 			curFlow = &farneback;
-            farneback.setPyramidScale( pyrScale.get() );
-            farneback.setNumLevels( levels.get() );
-            farneback.setWindowSize( winsize.get() );
-            farneback.setNumIterations( iterations.get() );
-            farneback.setPolyN( polyN.get() );
-            farneback.setPolySigma( polySigma.get() );
-            farneback.setUseGaussian(OPTFLOW_FARNEBACK_GAUSSIAN.get());
+            farneback.setPyramidScale( pyrScale );
+            farneback.setNumLevels( levels );
+            farneback.setWindowSize( winsize );
+            farneback.setNumIterations( iterations );
+            farneback.setPolyN( polyN );
+            farneback.setPolySigma( polySigma );
+            farneback.setUseGaussian( OPTFLOW_FARNEBACK_GAUSSIAN );
 			
 		} else {
 			curFlow = &pyrLk;
-            pyrLk.setMaxFeatures( maxFeatures.get() );
-            pyrLk.setQualityLevel( qualityLevel.get() );
-            pyrLk.setMinDistance( minDistance.get() );
-            pyrLk.setWindowSize( winSize.get() );
-            pyrLk.setMaxLevel( maxLevel.get() );
+            pyrLk.setMaxFeatures( maxFeatures );
+            pyrLk.setQualityLevel( qualityLevel );
+            pyrLk.setMinDistance( minDistance );
+            pyrLk.setWindowSize( winSize );
+            pyrLk.setMaxLevel( maxLevel );
 		}
         //check it out that that you can use Flow polymorphically
         curFlow->calcOpticalFlow(frame);
