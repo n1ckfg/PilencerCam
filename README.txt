@@ -1,6 +1,5 @@
 Pilencer is an RPi camera app that sends a start command when it detects motion, and a stop command after a timeout. 
-Based on: https://www.pyimagesearch.com/2015/05/25/basic-motion-detection-and-tracking-with-python-and-opencv/
-...and the work of @jvcleave and @orgicus. 
+Based on the work of @jvcleave and @orgicus. 
 
 Pilencer can use Bonjour (aka Zeroconf) to send OSC without configuring IP addresses.
 
