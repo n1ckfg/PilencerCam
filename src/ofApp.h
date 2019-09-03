@@ -32,6 +32,10 @@ class ofApp : public ofBaseApp {
 		ofBuffer contourPointsBuffer;
 		ofxXmlSettings settings;
 
+	    ofxCv::FlowFarneback farneback;
+	    ofxCv::FlowPyrLK pyrLk;
+	    ofxCv::Flow* curFlow;
+
 		ofxCvPiCam cam;
 		cv::Mat frame, frameProcessed;
 		ofImage gray;
