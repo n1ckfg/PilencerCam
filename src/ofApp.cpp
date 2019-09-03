@@ -77,7 +77,7 @@ void ofApp::update() {
     frame = cam.grab();
 
     if (!frame.empty()) {
-        if(useFarneback.get()) {
+        if (useFarneback) {
 			curFlow = &farneback;
             farneback.setPyramidScale( pyrScale );
             farneback.setNumLevels( levels );
@@ -86,7 +86,6 @@ void ofApp::update() {
             farneback.setPolyN( polyN );
             farneback.setPolySigma( polySigma );
             farneback.setUseGaussian( OPTFLOW_FARNEBACK_GAUSSIAN );
-			
 		} else {
 			curFlow = &pyrLk;
             pyrLk.setMaxFeatures( maxFeatures );
@@ -108,9 +107,13 @@ void ofApp::draw() {
         if (debug) {
 		    drawMat(frame,220,0,w*4,h*4);
 		    curFlow->draw(220,0,w*4,h*4);
-        }
 
-        std::cout << curFlow->getFeatures() << "\n" << curFlow->getCurrent() << "\n" << curFlow->getMotion();
+	        if (useFarneback) {
+	        	std::cout << farneback.getTotalFlow() << "\n" << farneback.getAverageFlow();
+		    } else {
+		    	std::cout << pyrLk.getFeatures() << "\n" << pyrLk.getCurrent() << "\n" << pyrLk.getMotion();
+		    }
+    	}
     }
 
     if (debug) {
