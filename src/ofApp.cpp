@@ -86,7 +86,9 @@ void ofApp::update() {
             farneback.setPolyN( polyN );
             farneback.setPolySigma( polySigma );
             farneback.setUseGaussian( OPTFLOW_FARNEBACK_GAUSSIAN );
-		} else {
+		} 
+		/*
+		else {
 			curFlow = &pyrLk;
             pyrLk.setMaxFeatures( maxFeatures );
             pyrLk.setQualityLevel( qualityLevel );
@@ -94,6 +96,7 @@ void ofApp::update() {
             pyrLk.setWindowSize( winSize );
             pyrLk.setMaxLevel( maxLevel );
 		}
+		*/
         //check it out that that you can use Flow polymorphically
         curFlow->calcOpticalFlow(frame);
     }
@@ -105,11 +108,11 @@ void ofApp::draw() {
     
     if(!frame.empty()) {
         if (debug) {
-		    drawMat(frame,220,0,w*4,h*4);
-		    curFlow->draw(220,0,w*4,h*4);
+		    drawMat(frame,0, 0, w * 4, h * 4);
+		    curFlow->draw(0, 0, w * 4, h * 4);
 
 	        if (useFarneback) {
-	        	std::cout << farneback.getTotalFlow() << "\n" << farneback.getAverageFlow();
+	        	std::cout << "total: " << farneback.getTotalFlow() << "\n" << "avg: " << farneback.getAverageFlow();
 		    }
     	}
     }
