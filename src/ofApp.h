@@ -23,7 +23,7 @@ class ofApp : public ofBaseApp {
 		ofxXmlSettings settings;
 
 	    ofxCv::FlowFarneback farneback;
-	    ofxCv::FlowPyrLK pyrLk;
+	    //ofxCv::FlowPyrLK pyrLk;
 	    ofxCv::Flow* curFlow;
 	    int w,h;
 	    float pyrScale;
@@ -41,6 +41,9 @@ class ofApp : public ofBaseApp {
 	    int minDistance;
 
 	    float triggerThreshold;
+	    int timeDelay;
+	    int markTime;
+	    bool timeTriggered;
 
 		ofxCvPiCam cam;
 		cv::Mat frame;

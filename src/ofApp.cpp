@@ -40,6 +40,9 @@ void ofApp::setup() {
     cam.setup(w, h, false); // color/gray;
 
     triggerThreshold = settings.getValue("settings:trigger_threshold", 0.5);
+    timeDelay = settings.getValue("settings:time_delay", 5000);
+    markTime = 0;
+    timeTriggered = false;
 
     camSharpness = settings.getValue("settings:sharpness", 0); 
     camContrast = settings.getValue("settings:contrast", 0); 
@@ -76,6 +79,11 @@ void ofApp::setup() {
 }
 
 void ofApp::update() {
+	if (ofGetElapsedTimeMillis() > markTime + timeDelay) {
+	    sendOsc(false);
+		timeTriggered = false;
+	}
+
     frame = cam.grab();
 
     if (!frame.empty()) {
@@ -102,13 +110,17 @@ void ofApp::update() {
         //check it out that that you can use Flow polymorphically
         curFlow->calcOpticalFlow(frame);
 
-       	if (useFarneback) {
+       	if (useFarneback && !timeTriggered) {
 	    	ofVec2f avg = farneback.getAverageFlow();
 	    	float newAvg = (abs(avg.x) + abs(avg.y)) / 2.0;
 	    	bool trigger = newAvg > triggerThreshold;
 	    	std::cout << "avg: " << newAvg << " trigger: " <<  trigger << "\n";
 	    	
-	    	if (trigger) sendOsc(trigger);
+	    	if (trigger) {
+	    		sendOsc(true);
+	    		timeTriggered = true;
+	    		markTime = ofGetElapsedTimeMillis();
+	    	}
 	    }
     }
 }

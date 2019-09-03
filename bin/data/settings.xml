@@ -6,6 +6,7 @@
     <!-- * -->
     <debug>1</debug>
     <trigger_threshold>0.5</trigger_threshold>
+    <time_delay>5000</time_delay>
     <!-- * -->
     <sharpness>50</sharpness>
 	<contrast>0</contrast>
