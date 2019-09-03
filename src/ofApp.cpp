@@ -115,9 +115,9 @@ void ofApp::draw() {
 
 	        if (useFarneback) {
 	        	ofVec2f avg = farneback.getAverageFlow();
-	        	float newAvg = (avg.x + avg.y) / 2.0;
+	        	float newAvg = (abs(avg.x) + abs(avg.y)) / 2.0;
 	        	bool trigger = newAvg > triggerThreshold;
-	        	std::cout << "avg: " << newAvg << " " <<  trigger << "\n";
+	        	std::cout << "avg: " << newAvg << " trigger: " <<  trigger << "\n";
 		    }
     	}
     }
