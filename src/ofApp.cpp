@@ -156,6 +156,6 @@ void ofApp::sendOsc(bool b) {
     m.addIntArg((int) b);
 
     sender.sendMessage(m);
-    std:cout << "SENT: " << b << "/n";
+    std:cout << "SENT: " << b << "\n";
 }
 
