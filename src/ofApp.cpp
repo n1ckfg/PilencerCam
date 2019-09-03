@@ -39,6 +39,8 @@ void ofApp::setup() {
     h = 120;
     cam.setup(w, h, false); // color/gray;
 
+    triggerThreshold = settings.getValue("settings:trigger_threshold", 0.5);
+
     camSharpness = settings.getValue("settings:sharpness", 0); 
     camContrast = settings.getValue("settings:contrast", 0); 
     camBrightness = settings.getValue("settings:brightness", 50); 
@@ -112,7 +114,10 @@ void ofApp::draw() {
 		    curFlow->draw(0, 0, w * 4, h * 4);
 
 	        if (useFarneback) {
-	        	std::cout << "total: " << farneback.getTotalFlow() << "\n" << "avg: " << farneback.getAverageFlow();
+	        	glm::vec2 avg = farneback.getAverageFlow();
+	        	float newAvg = (avg.x + avg.y) / 2.0;
+
+	        	std::cout << newAvg << " " << newAvg > triggerThreshold << "\n";
 		    }
     	}
     }

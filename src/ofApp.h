@@ -39,6 +39,8 @@ class ofApp : public ofBaseApp {
 	    int maxFeatures;
 	    float qualityLevel;
 	    int minDistance;
+	    
+	    float triggerThreshold;
 
 		ofxCvPiCam cam;
 		cv::Mat frame;

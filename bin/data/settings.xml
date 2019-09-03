@@ -5,8 +5,8 @@
     <framerate>90</framerate>
     <!-- * -->
     <debug>1</debug>
+    <trigger_threshold>0.5</trigger_threshold>
     <!-- * -->
-    <threshold>30</threshold>
     <sharpness>50</sharpness>
 	<contrast>0</contrast>
 	<brightness>50</brightness>
