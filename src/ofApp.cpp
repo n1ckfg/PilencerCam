@@ -110,15 +110,18 @@ void ofApp::update() {
         //check it out that that you can use Flow polymorphically
         curFlow->calcOpticalFlow(frame);
 
-       	if (useFarneback && !timeTriggered) {
+       	if (useFarneback) {
 	    	ofVec2f avg = farneback.getAverageFlow();
 	    	float newAvg = (abs(avg.x) + abs(avg.y)) / 2.0;
 	    	bool trigger = newAvg > triggerThreshold;
 	    	std::cout << "avg: " << newAvg << " trigger: " <<  trigger << "\n";
 	    	
 	    	if (trigger) {
-	    		sendOsc(true);
-	    		timeTriggered = true;
+	    		if (!timeTriggered) {
+                    sendOsc(true);
+	    		    timeTriggered = true;
+                }
+                
 	    		markTime = ofGetElapsedTimeMillis();
 	    	}
 	    }
