@@ -114,7 +114,7 @@ void ofApp::draw() {
 		    curFlow->draw(0, 0, w * 4, h * 4);
 
 	        if (useFarneback) {
-	        	glm::vec2 avg = farneback.getAverageFlow();
+	        	ofVec2f avg = farneback.getAverageFlow();
 	        	float newAvg = (avg.x + avg.y) / 2.0;
 
 	        	std::cout << newAvg << " " << newAvg > triggerThreshold << "\n";
