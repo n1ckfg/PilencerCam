@@ -110,8 +110,6 @@ void ofApp::draw() {
 
 	        if (useFarneback) {
 	        	std::cout << farneback.getTotalFlow() << "\n" << farneback.getAverageFlow();
-		    } else {
-		    	std::cout << pyrLk.getFeatures() << "\n" << pyrLk.getCurrent() << "\n" << pyrLk.getMotion();
 		    }
     	}
     }
