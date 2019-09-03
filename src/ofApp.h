@@ -12,35 +12,36 @@ class ofApp : public ofBaseApp {
         void setup();
 		void update();
 		void draw();
-		
-		void keyPressed(int key);
-		void keyReleased(int key);
 
 		string compname;
 		string host; // hostname;
 		int port; // default 7110;
 
 		bool debug; // draw to local screen, default true
-		bool video; // send video image, default false
-		bool brightestPixel; // send brightest pixel, default false
-		bool blobs;  // send blob tracking, default true
-		bool contours; // send contours, default false
 
 		ofFile file;
-		ofBuffer videoBuffer;
-		ofBuffer contourColorBuffer;
-		ofBuffer contourPointsBuffer;
 		ofxXmlSettings settings;
 
 	    ofxCv::FlowFarneback farneback;
 	    ofxCv::FlowPyrLK pyrLk;
 	    ofxCv::Flow* curFlow;
+	    int w,h;
+	    float pyrScale;
+	    int levels;
+	    int winsize;
+	    int iterations;
+	    int polyN;
+	    float polySigma;
+	    bool OPTFLOW_FARNEBACK_GAUSSIAN;
+	    bool useFarneback;
+	    int winSize;
+	    int maxLevel;
+	    int maxFeatures;
+	    float qualityLevel;
+	    int minDistance;
 
 		ofxCvPiCam cam;
-		cv::Mat frame, frameProcessed;
-		ofImage gray;
-		int videoQuality; // 5 best to 1 worst, default 3 medium
-		bool videoColor;
+		cv::Mat frame;
 
 		// for more camera settings, see:
 		// https://github.com/orgicus/ofxCvPiCam/blob/master/example-ofxCvPiCam-allSettings/src/testApp.cpp
@@ -56,26 +57,10 @@ class ofApp : public ofBaseApp {
 		int camExposureMode; // 0 to 13, default 0
 
 		//string oscAddress;
-        int width;
-		int height;
 		int framerate;
-	    int thresholdValue; // default 127
-		int thresholdKeyCounter;
-		bool thresholdKeyFast;
 		//bool doDrawInfo;
 
 		ofxOscSender sender;
-		void sendOscVideo();
-		void sendOscBlobs(int index, float x, float y);
-		void sendOscContours(int index);
-		void sendOscPixel(float x, float y);
-
-	    ofxCv::ContourFinder contourFinder;
-		float contourThreshold;  // default 127
-		float contourMinAreaRadius; // default 10
-		float contourMaxAreaRadius; // default 150
-		int contourSlices; // default 20
-		ofxCv::TrackingColorMode trackingColorMode; // RGB, HSV, H, HS; default RGB
-		//ofColor targetColor; 
+		void sendOsc();
 
 };
