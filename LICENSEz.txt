@@ -1,6 +1,6 @@
-PiMocapCam
-Copyright (c) 2018 Nick Fox-Gieg
-http://fox-gieg.com
+Pilencer
+Copyright (c) 2019 Nick Fox-Gieg
+https://fox-gieg.com
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
