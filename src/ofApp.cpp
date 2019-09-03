@@ -154,7 +154,7 @@ void ofApp::sendOsc(int _trigger) {
     m.setAddress("/pilencer");
     m.addStringArg(compname);
     m.addIntArg(_trigger);
-    m.addFloatArt(avgMotion);
+    m.addFloatArg(avgMotion);
 
     sender.sendMessage(m);
     std:cout << "*** SENT: " << _trigger << " ***\n";
