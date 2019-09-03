@@ -44,6 +44,7 @@ class ofApp : public ofBaseApp {
 	    int timeDelay;
 	    int markTime;
 	    bool timeTriggered;
+	    float avgMotion;
 
 		ofxCvPiCam cam;
 		cv::Mat frame;
@@ -66,6 +67,6 @@ class ofApp : public ofBaseApp {
 		//bool doDrawInfo;
 
 		ofxOscSender sender;
-		void sendOsc(bool b);
+		void sendOsc(int _trigger);
 
 };

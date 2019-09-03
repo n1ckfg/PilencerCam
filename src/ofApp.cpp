@@ -68,20 +68,20 @@ void ofApp::setup() {
     polyN = 7;   // 5 to 10
     polySigma = 1.5;   // 1.1 to 2
     OPTFLOW_FARNEBACK_GAUSSIAN = false;
-	
     useFarneback = true;
     winSize = 32;   // 4 to 64
     maxLevel = 3;   // 0 to 8
-	
     maxFeatures = 200;   // 1 to 1000
     qualityLevel = 0.01;   // 0.001 to 0.02
     minDistance = 4;   // 1 to 16
+
+    avgMotion = 0;
 }
 
 void ofApp::update() {
 	if (timeTriggered && ofGetElapsedTimeMillis() > markTime + timeDelay) {
 		timeTriggered = false;
-	    sendOsc(false);
+	    sendOsc(0);
 	}
 
     frame = cam.grab();
@@ -111,15 +111,15 @@ void ofApp::update() {
         curFlow->calcOpticalFlow(frame);
 
        	if (useFarneback) {
-	    	ofVec2f avg = farneback.getAverageFlow();
-	    	float newAvg = (abs(avg.x) + abs(avg.y)) / 2.0;
-	    	bool trigger = newAvg > triggerThreshold;
-	    	std::cout << "avg: " << newAvg << " trigger: " <<  trigger << "\n";
+	    	ofVec2f avgRaw = farneback.getAverageFlow();
+	    	avgMotion = (abs(avgRaw.x) + abs(avgRaw.y)) / 2.0;
+	    	bool trigger = avgMotion > triggerThreshold;
+	    	std::cout << "avg: " << avgMotion << " trigger: " <<  trigger << "\n";
 	    	
 	    	if (trigger) {
 	    		if (!timeTriggered) {
 	    		    timeTriggered = true;
-                    sendOsc(true);
+                    sendOsc(1);
                 }
                 
 	    		markTime = ofGetElapsedTimeMillis();
@@ -149,13 +149,14 @@ void ofApp::draw() {
 }
 
 
-void ofApp::sendOsc(bool b) {
+void ofApp::sendOsc(int _trigger) {
 	ofxOscMessage m;
     m.setAddress("/pilencer");
     m.addStringArg(compname);
-    m.addIntArg((int) b);
+    m.addIntArg(_trigger);
+    m.addFloatArt(avgMotion);
 
     sender.sendMessage(m);
-    std:cout << "*** SENT: " << b << " ***\n";
+    std:cout << "*** SENT: " << _trigger << " ***\n";
 }
 
