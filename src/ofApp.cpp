@@ -8,7 +8,7 @@ void ofApp::setup() {
 
     //doDrawInfo  = true; 
     ofSetVerticalSync(false);    
-    framerate = settings.getValue("settings:framerate", 90); 
+    framerate = settings.getValue("settings:framerate", 60); 
     ofSetFrameRate(framerate);
 
     host = settings.getValue("settings:host", "127.0.0.1"); 
@@ -150,11 +150,12 @@ void ofApp::draw() {
 
 
 void ofApp::sendOsc(bool b) {
-    ofxOscMessage m;
+	ofxOscMessage m;
     m.setAddress("/pilencer");
     m.addStringArg(compname);
     m.addIntArg((int) b);
 
     sender.sendMessage(m);
+    std:cout << "SENT: " << b << "/n";
 }
 
