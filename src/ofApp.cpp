@@ -147,16 +147,11 @@ void ofApp::draw() {
 
 
 void ofApp::sendOsc(bool b) {
-	/*
     ofxOscMessage m;
-    m.setAddress("/contour");
+    m.setAddress("/pilencer");
     m.addStringArg(compname);
-    
-    m.addIntArg(index);
-    m.addBlobArg(contourColorBuffer);
-    m.addBlobArg(contourPointsBuffer);
+    m.addBoolArg(b);
 
     sender.sendMessage(m);
-    */
 }
 
