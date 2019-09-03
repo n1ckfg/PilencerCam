@@ -17,7 +17,7 @@ void oscEvent(OscMessage msg) {
   if (msg.checkAddrPattern("/pilencer") && msg.checkTypetag("si")) {
     
     //String hostname = msg.get(0).stringValue();
-    boolean trigger = boolean(msg.get(1).intValue());
+    trigger = boolean(msg.get(1).intValue());
     
     println(trigger);
   }
