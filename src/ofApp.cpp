@@ -150,7 +150,7 @@ void ofApp::sendOsc(bool b) {
     ofxOscMessage m;
     m.setAddress("/pilencer");
     m.addStringArg(compname);
-    m.addBoolArg(b);
+    m.addIntArg((int) b);
 
     sender.sendMessage(m);
 }
