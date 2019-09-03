@@ -101,6 +101,15 @@ void ofApp::update() {
 		*/
         //check it out that that you can use Flow polymorphically
         curFlow->calcOpticalFlow(frame);
+
+       	if (useFarneback) {
+	    	ofVec2f avg = farneback.getAverageFlow();
+	    	float newAvg = (abs(avg.x) + abs(avg.y)) / 2.0;
+	    	bool trigger = newAvg > triggerThreshold;
+	    	std::cout << "avg: " << newAvg << " trigger: " <<  trigger << "\n";
+	    	
+	    	if (trigger) sendOsc(trigger);
+	    }
     }
 }
 
@@ -112,15 +121,8 @@ void ofApp::draw() {
         if (debug) {
 		    drawMat(frame,0, 0, w * 4, h * 4);
 		    curFlow->draw(0, 0, w * 4, h * 4);
-
-	        if (useFarneback) {
-	        	ofVec2f avg = farneback.getAverageFlow();
-	        	float newAvg = (abs(avg.x) + abs(avg.y)) / 2.0;
-	        	bool trigger = newAvg > triggerThreshold;
-	        	std::cout << "avg: " << newAvg << " trigger: " <<  trigger << "\n";
-		    }
     	}
-    }
+	}
 
     if (debug) {
         stringstream info;
@@ -132,7 +134,7 @@ void ofApp::draw() {
 }
 
 
-void ofApp::sendOsc() {
+void ofApp::sendOsc(bool b) {
 	/*
     ofxOscMessage m;
     m.setAddress("/contour");

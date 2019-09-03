@@ -39,7 +39,7 @@ class ofApp : public ofBaseApp {
 	    int maxFeatures;
 	    float qualityLevel;
 	    int minDistance;
-	    
+
 	    float triggerThreshold;
 
 		ofxCvPiCam cam;
@@ -63,6 +63,6 @@ class ofApp : public ofBaseApp {
 		//bool doDrawInfo;
 
 		ofxOscSender sender;
-		void sendOsc();
+		void sendOsc(bool b);
 
 };
