@@ -79,9 +79,9 @@ void ofApp::setup() {
 }
 
 void ofApp::update() {
-	if (ofGetElapsedTimeMillis() > markTime + timeDelay) {
-	    sendOsc(false);
+	if (timeTriggered && ofGetElapsedTimeMillis() > markTime + timeDelay) {
 		timeTriggered = false;
+	    sendOsc(false);
 	}
 
     frame = cam.grab();
@@ -118,8 +118,8 @@ void ofApp::update() {
 	    	
 	    	if (trigger) {
 	    		if (!timeTriggered) {
-                    sendOsc(true);
 	    		    timeTriggered = true;
+                    sendOsc(true);
                 }
                 
 	    		markTime = ofGetElapsedTimeMillis();
