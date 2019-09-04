@@ -3,7 +3,7 @@
     <host>BrazilV.local</host>
     <port>7110</port>
     <framerate>90</framerate>
-    <debug>0</debug>
+    <debug>1</debug>
     <!-- * -->
     <!-- trigger settings -->
     <trigger_threshold>10</trigger_threshold>

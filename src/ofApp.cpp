@@ -125,6 +125,8 @@ void ofApp::draw() {
     }
 
     if (debug) {
+        std::cout << "contours: " << contourCounter << "   isMoving: " << isMoving << "   trigger: " << trigger << "\n";
+
         stringstream info;
         info << "FPS: " << ofGetFrameRate() << "\n";
         //info << "Camera Resolution: " << cam.width << "x" << cam.height << " @ "<< "xx" <<"FPS"<< "\n";
