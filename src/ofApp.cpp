@@ -1,8 +1,5 @@
 #include "ofApp.h"
 
-using namespace cv;
-using namespace ofxCv;
-
 //--------------------------------------------------------------
 void ofApp::setup() {
     // basic values
@@ -33,7 +30,7 @@ void ofApp::setup() {
     vidGrabber.setup(omxCameraSettings);
     vidTexture.allocate(width,height, GL_RGB);
 
-    oscSender.setup("BrazilV.local", 7110);
+    sender.setup("BrazilV.local", 7110);
 }
 
 
@@ -127,7 +124,7 @@ void ofApp::draw(){
             ofSetColor(0, 0, gridData[i] / 2);
             ofRect( xpos, ypos, xlen, ylen);
         }
-        
+
         sendOsc(i, gridData[i]);
     }
 
@@ -140,5 +137,5 @@ void ofApp::sendOsc (int slot, int value) {
     msg.addIntArg(slot);
     msg.addIntArg(value);
 
-    oscSender.sendMessage(msg);
+    sender.sendMessage(msg);
 }
