@@ -18,31 +18,31 @@ void ofApp::setup() {
 
     sender.setup(host, port);
 
+    // ~ ~ ~   get a persistent name for this computer   ~ ~ ~
     compname = "RPi";
-    
     file.open(ofToDataPath("compname.txt"), ofFile::ReadWrite, false);
     ofBuffer buff;
-    if (file) {
+    if (file) { // use existing file if it's there
         buff = file.readToBuffer();
         compname = buff.getText();
-    } else {
-        compname += "_" + ofGetTimestampString("%y-%m-%d-%H-%M-%S-%i");
-        ofStringReplace(compname, "-", "");
+    } else { // otherwise make a new one
+        compname += "_" + ofGetTimestampString("%y%m%d%H%M%S%i");
         ofStringReplace(compname, "\n", "");
         ofStringReplace(compname, "\r", "");
         buff.set(compname.c_str(), compname.size());
         ofBufferToFile("compname.txt", buff);
     }
-    cout << compname;
+    std::cout << compname;
 
     w = 160;
     h = 120;
     cam.setup(w, h, false); // color/gray;
 
     triggerThreshold = settings.getValue("settings:trigger_threshold", 0.5);
+    counterMax = settings.getValue("settings:trigger_frames", 3);
     timeDelay = settings.getValue("settings:time_delay", 5000);
-    markTime = 0;
 
+    // ~ ~ ~   cam settings   ~ ~ ~
     camSharpness = settings.getValue("settings:sharpness", 0); 
     camContrast = settings.getValue("settings:contrast", 0); 
     camBrightness = settings.getValue("settings:brightness", 50); 
@@ -60,22 +60,26 @@ void ofApp::setup() {
     cam.setShutterSpeed(camShutterSpeed);
     //cam.setFrameRate // not implemented in ofxCvPiCam
 
-    pyrScale = 0.5;   // 0 to 1
-    levels = 4;   // 1 to 8
-    winsize = 8;   // 4 to 64
-    iterations = 2;   // 1 to 8
-    polyN = 7;   // 5 to 10
-    polySigma = 1.5;   // 1.1 to 2
-    OPTFLOW_FARNEBACK_GAUSSIAN = false;
+    // ~ ~ ~   optical flow settings   ~ ~ ~
+    pyrScale = 0.5;   // 0 to 1, default 0.5
+    levels = 4;   // 1 to 8, default 4
+    winsize = 8;   // 4 to 64, default 8
+    iterations = 2;   // 1 to 8, default 2
+    polyN = 7;   // 5 to 10, default 7
+    polySigma = 1.5;   // 1.1 to 2, default 
+    OPTFLOW_FARNEBACK_GAUSSIAN = false; // default false
     //useFarneback = true;
-    winSize = 32;   // 4 to 64
-    maxLevel = 3;   // 0 to 8
-    maxFeatures = 200;   // 1 to 1000
-    qualityLevel = 0.01;   // 0.001 to 0.02
-    minDistance = 4;   // 1 to 16
+    winSize = 32;   // 4 to 64, default 32
+    maxLevel = 3;   // 0 to 8, default 3
+    maxFeatures = 200;   // 1 to 1000, default 200
+    qualityLevel = 0.01;   // 0.001 to 0.02, default 0.01
+    minDistance = 4;   // 1 to 16, default 4
 
     avgMotion = 0;
-
+    counter = 0;
+    markTime = 0;
+    trigger = false;
+    
     sendOsc(0);
 }
 
@@ -114,22 +118,29 @@ void ofApp::update() {
 	std::cout << "avg: " << avgMotion << " motion: " << isMoving << "\n";
 
     int t = ofGetElapsedTimeMillis();
-	if (isMoving) {
-		markTime = t;
 
-        if (!trigger) {
-            sendOsc(1);      
-        }
-	} else if (trigger && t > markTime + timeDelay) {
+	if (!trigger && isMoving) { // motion detected, but not triggered yet
+        	if (counter < counterMax) { // start counting frames
+        		counter++;
+        	} else { // motion frames have reached trigger threshold
+                markTime = t;
+	        	trigger = true;
+	            sendOsc(1);    
+	        }  
+    } else if (trigger && isMoving) { // triggered, reset timer as long as motion is detected
+        markTime = t;
+	} else if (trigger && !isMoving && t > markTime + timeDelay) { // triggered, timer has run out
+		trigger = false;
+		counter = 0;
         sendOsc(0);
     }
 }
 
-void ofApp::draw() {
-    ofSetColor(255);
-    ofBackground(0);
-    
+void ofApp::draw() {   
     if (debug) {
+    	ofSetColor(255);
+    	ofBackground(0);
+
         if(!frame.empty()) {
     	    drawMat(frame,0, 0, w * 4, h * 4);
     	    curFlow->draw(0, 0, w * 4, h * 4);
@@ -152,6 +163,5 @@ void ofApp::sendOsc(int _trigger) {
 
     sender.sendMessage(m);
     std:cout << "*** SENT: " << _trigger << " ***\n";
-    trigger = _trigger == 1;
 }
 

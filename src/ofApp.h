@@ -45,6 +45,8 @@ class ofApp : public ofBaseApp {
 	    int markTime;
 	    bool trigger;
 	    float avgMotion;
+	    int counter;
+	    int counterMax;
 
 		ofxCvPiCam cam;
 		cv::Mat frame;

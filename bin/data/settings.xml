@@ -3,11 +3,14 @@
     <host>BrazilV.local</host>
     <port>7110</port>
     <framerate>60</framerate>
-    <!-- * -->
     <debug>0</debug>
+    <!-- * -->
+    <!-- trigger settings -->
     <trigger_threshold>0.12</trigger_threshold>
+    <trigger_frames>3</trigger_frames>
     <time_delay>15000</time_delay>
     <!-- * -->
+    <!-- camera settings -->
     <sharpness>50</sharpness>
 	<contrast>0</contrast>
 	<brightness>50</brightness>
