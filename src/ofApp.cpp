@@ -83,6 +83,8 @@ void ofApp::setup() {
 }
 
 void ofApp::update() {
+	if (!isMoving) counter = 0;
+	
     frame = cam.grab();
 
     if (!frame.empty()) {
@@ -138,7 +140,6 @@ void ofApp::update() {
             markTime = t;
     	} else if (trigger && !isMoving && t > markTime + timeDelay) { // triggered, timer has run out
     		trigger = false;
-    		counter = 0;
         }
 
         sendOsc();
