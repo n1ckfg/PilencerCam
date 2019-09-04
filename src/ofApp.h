@@ -22,30 +22,19 @@ class ofApp : public ofBaseApp {
 		ofFile file;
 		ofxXmlSettings settings;
 
-	    ofxCv::FlowFarneback farneback;
-	    //ofxCv::FlowPyrLK pyrLk;
-	    ofxCv::Flow* curFlow;
-	    int width;
-	    int height;
-	    float pyrScale;
-	    int levels;
-	    int winsize;
-	    int iterations;
-	    int polyN;
-	    float polySigma;
-	    bool OPTFLOW_FARNEBACK_GAUSSIAN;
-	    //bool useFarneback;
-	    int winSize;
-	    int maxLevel;
-	    int maxFeatures;
-	    float qualityLevel;
-	    int minDistance;
+	    int width, height;
+	    ofxCv::ContourFinder contourFinder;
+		float contourThreshold;  // default 127
+		float contourMinAreaRadius; // default 10
+		float contourMaxAreaRadius; // default 150
+		int contourSlices; // default 20
+		ofxCv::TrackingColorMode trackingColorMode; // RGB, HSV, H, HS; default RGB
+	    int thresholdValue; // default 127
 
-	    float triggerThreshold;
+	    int triggerThreshold;
 	    int timeDelay;
 	    int markTime;
 	    bool trigger;
-	    bool sendPosition;
 	    float avgMotion;
 	    ofVec2f avgRaw;
 	    bool isMoving;
@@ -74,6 +63,5 @@ class ofApp : public ofBaseApp {
 
 		ofxOscSender sender;
 		void sendOsc(int _trigger);
-		void sendOscPosition(float x, float y);
 
 };
