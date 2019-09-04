@@ -8,7 +8,9 @@ void ofApp::setup() {
 
     //doDrawInfo  = true; 
     ofSetVerticalSync(false);    
-    framerate = settings.getValue("settings:framerate", 60); 
+    framerate = settings.getValue("settings:framerate", 30); 
+    width = settings.getValue("settings:width", 640); 
+    height = settings.getValue("settings:height", 480); 
     ofSetFrameRate(framerate);
 
     host = settings.getValue("settings:host", "127.0.0.1"); 
@@ -35,9 +37,7 @@ void ofApp::setup() {
     }
     std::cout << compname << "\n";
 
-    w = 160;
-    h = 120;
-    cam.setup(w, h, false); // color/gray;
+    cam.setup(width, height, false); // color/gray;
 
     triggerThreshold = settings.getValue("settings:trigger_threshold", 0.5);
     counterMax = settings.getValue("settings:trigger_frames", 3);
@@ -148,8 +148,8 @@ void ofApp::draw() {
     	ofBackground(0);
 
         if(!frame.empty()) {
-    	    drawMat(frame,0, 0, w * 4, h * 4);
-    	    curFlow->draw(0, 0, w * 4, h * 4);
+    	    drawMat(frame,0, 0);
+    	    curFlow->draw(0, 0);
     	}
 
         stringstream info;

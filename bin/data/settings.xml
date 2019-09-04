@@ -2,7 +2,9 @@
 <settings>
     <host>BrazilV.local</host>
     <port>7110</port>
-    <framerate>60</framerate>
+    <width>640</width>
+    <height>480</height>
+    <framerate>30</framerate>
     <debug>0</debug>
     <send_position>0</send_position>
     <!-- * -->

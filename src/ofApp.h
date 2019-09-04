@@ -25,7 +25,8 @@ class ofApp : public ofBaseApp {
 	    ofxCv::FlowFarneback farneback;
 	    //ofxCv::FlowPyrLK pyrLk;
 	    ofxCv::Flow* curFlow;
-	    int w,h;
+	    int width;
+	    int height;
 	    float pyrScale;
 	    int levels;
 	    int winsize;
