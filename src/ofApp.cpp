@@ -61,7 +61,7 @@ void ofApp::setup() {
     //cam.setFrameRate // not implemented in ofxCvPiCam
 
     // ~ ~ ~   optical flow settings   ~ ~ ~
-    useFarneback = (bool) settings.getValue("settings:dense_flow", 0);
+    useFarneback = (bool) settings.getValue("settings:dense_flow", 1);
     pyrScale = 0.5;   // 0 to 1, default 0.5
     levels = 4;   // 1 to 8, default 4
     winsize = 8;   // 4 to 64, default 8
@@ -166,7 +166,7 @@ void ofApp::sendOsc() {
 	ofxOscMessage msg;
     msg.setAddress("/pilencer");
     msg.addStringArg(compname);
-    msg.addIntArg((int) trigger);
+    msg.addIntArg((int) trigger == isMoving);
     
     if (sendPosition) {
 	    msg.addFloatArg(motionVal);
