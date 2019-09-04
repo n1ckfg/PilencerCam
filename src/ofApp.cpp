@@ -62,7 +62,6 @@ void ofApp::setup() {
 
     // ~ ~ ~   contour settings   ~ ~ ~
     thresholdValue = settings.getValue("settings:threshold", 127); 
-    contourSlices = settings.getValue("settings:contour_slices", 10); 
     contourThreshold = 2.0;
     contourMinAreaRadius = 1.0;
     contourMaxAreaRadius = 250.0;
@@ -89,15 +88,11 @@ void ofApp::draw() {
             ofNoFill();
         }
 
-        int contourCounter = 0;
+        contourFinder.setThreshold(h);
+        contourFinder.findContours(frame);
+        if (debug) contourFinder.draw();            
 
-        for (int h=0; h<255; h += int(255/contourSlices)) {
-            contourFinder.setThreshold(h);
-            contourFinder.findContours(frame);
-            if (debug) contourFinder.draw();            
-
-            contourCounter += contourFinder.size();   
-        }
+        int contourCounter = contourFinder.size();   
 
         isMoving = contourCounter > triggerThreshold;
 
