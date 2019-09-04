@@ -131,7 +131,6 @@ void ofApp::update() {
         	if (counter < counterMax) { // start counting frames
         		counter++;
         	} else { // motion frames have reached trigger threshold
-                curFlow.resetFlow(); // prevent feedback loops
                 markTime = t;
 	        	trigger = true;
 	        }  
@@ -176,5 +175,5 @@ void ofApp::sendOsc() {
 	}
 
     sender.sendMessage(msg);
-    std:cout << "*** SENT: " << _trigger << " ***\n";
+    std:cout << "*** SENT: " << trigger << " ***\n";
 }
