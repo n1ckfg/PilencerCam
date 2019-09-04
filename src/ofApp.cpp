@@ -79,13 +79,6 @@ void ofApp::setup() {
 }
 
 void ofApp::update() {
-    int t = ofGetElapsedTimeMillis();
-
-	if (trigger && t > markTime + timeDelay) {
-		trigger = false;
-	    sendOsc(0);
-	}
-
     frame = cam.grab();
 
     if (!frame.empty()) {
@@ -111,20 +104,25 @@ void ofApp::update() {
 		*/
         //check it out that that you can use Flow polymorphically
         curFlow->calcOpticalFlow(frame);
+    }
+     
+   	//if (useFarneback) {
+	ofVec2f avgRaw = farneback.getAverageFlow();
+	avgMotion = (abs(avgRaw.x) + abs(avgRaw.y)) / 2.0;
+	bool isMoving = avgMotion > triggerThreshold;
+	std::cout << "avg: " << avgMotion << " motion: " << isMoving << "\n";
+	
+	if (isMoving) {
+        int t = ofGetElapsedTimeMillis();
+		markTime = t;
 
-       	//if (useFarneback) {
-    	ofVec2f avgRaw = farneback.getAverageFlow();
-    	avgMotion = (abs(avgRaw.x) + abs(avgRaw.y)) / 2.0;
-    	bool isMoving = avgMotion > triggerThreshold;
-    	std::cout << "avg: " << avgMotion << " motion: " << isMoving << "\n";
-    	
-    	if (isMoving) {
-    		markTime = t;
-            if (!trigger) {
-                trigger = true;
-                sendOsc(1);      
-            }
-    	}
+        if (!trigger) {
+            trigger = true;
+            sendOsc(1);      
+        }
+	} else if (trigger && t > markTime + timeDelay) {
+        trigger = false;
+        sendOsc(0);
     }
 }
 
