@@ -106,7 +106,7 @@ void ofApp::update() {
             pyrLk.setMaxLevel( maxLevel );
 		}
 
-        // you can use Flow polymorphically
+        // you use Flow polymorphically
         curFlow->calcOpticalFlow(frame);
 
         if (useFarneback) {
@@ -140,7 +140,7 @@ void ofApp::update() {
             markTime = t;
     	} else if (trigger && !isMoving && t > markTime + timeDelay) { // triggered, timer has run out
     		trigger = false;
-	        curFlow.resetFlow();
+	        curFlow->resetFlow();
         }
 
         sendOsc();
