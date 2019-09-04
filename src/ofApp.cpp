@@ -166,7 +166,7 @@ void ofApp::sendOsc() {
 	ofxOscMessage msg;
     msg.setAddress("/pilencer");
     msg.addStringArg(compname);
-    msg.addIntArg((int) trigger == isMoving);
+    msg.addIntArg((int) trigger);
     
     if (sendPosition) {
 	    msg.addFloatArg(motionVal);
