@@ -81,8 +81,6 @@ void ofApp::setup() {
     markTime = 0;
     trigger = false;
     isMoving = false;
-
-    sendOsc(0);
 }
 
 void ofApp::update() {
@@ -117,26 +115,30 @@ void ofApp::update() {
         avgMotion = (abs(avgRaw.x) + abs(avgRaw.y)) / 2.0;
         isMoving = avgMotion > triggerThreshold;
         std::cout << "avg: " << avgMotion << " motion: " << isMoving << "\n";
+   
+        int t = ofGetElapsedTimeMillis();
+
+    	if (!trigger && isMoving) { // motion detected, but not triggered yet
+            	if (counter < counterMax) { // start counting frames
+            		counter++;
+            	} else { // motion frames have reached trigger threshold
+                    markTime = t;
+    	        	trigger = true;
+    	        }  
+        } else if (trigger && isMoving) { // triggered, reset timer as long as motion is detected
+            markTime = t;
+    	} else if (trigger && !isMoving && t > markTime + timeDelay) { // triggered, timer has run out
+    		trigger = false;
+    		counter = 0;
+        }
+
+        if (trigger) {
+            sendOsc(1);    
+        } else {
+            sendOsc(0);
+        }
 
         if (sendPosition) sendOscPosition(avgRaw.x, avgRaw.y);
-    }
-     
-    int t = ofGetElapsedTimeMillis();
-
-	if (!trigger && isMoving) { // motion detected, but not triggered yet
-        	if (counter < counterMax) { // start counting frames
-        		counter++;
-        	} else { // motion frames have reached trigger threshold
-                markTime = t;
-	        	trigger = true;
-	            sendOsc(1);    
-	        }  
-    } else if (trigger && isMoving) { // triggered, reset timer as long as motion is detected
-        markTime = t;
-	} else if (trigger && !isMoving && t > markTime + timeDelay) { // triggered, timer has run out
-		trigger = false;
-		counter = 0;
-        sendOsc(0);
     }
 }
 
