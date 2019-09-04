@@ -69,7 +69,7 @@ void ofApp::update() {
         }
         
         // thresholding of the motion data
-        int threshold = (int) (mousePct * 255);
+        int threshold = 127;
         //int threshold = (int) (thresholdKey * 2);
         int row = 0;
         int col = 0;
