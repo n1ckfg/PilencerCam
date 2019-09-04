@@ -140,7 +140,7 @@ void ofApp::update() {
             markTime = t;
     	} else if (trigger && !isMoving && t > markTime + timeDelay) { // triggered, timer has run out
     		trigger = false;
-	        curFlow.clear();
+	        curFlow.resetFlow();
         }
 
         sendOsc();
