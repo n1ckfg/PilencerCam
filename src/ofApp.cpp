@@ -42,7 +42,6 @@ void ofApp::setup() {
     triggerThreshold = settings.getValue("settings:trigger_threshold", 0.5);
     timeDelay = settings.getValue("settings:time_delay", 5000);
     markTime = 0;
-    trigger = false;
 
     camSharpness = settings.getValue("settings:sharpness", 0); 
     camContrast = settings.getValue("settings:contrast", 0); 
@@ -119,11 +118,9 @@ void ofApp::update() {
 		markTime = t;
 
         if (!trigger) {
-            trigger = true;
             sendOsc(1);      
         }
 	} else if (trigger && t > markTime + timeDelay) {
-        trigger = false;
         sendOsc(0);
     }
 }
@@ -155,5 +152,6 @@ void ofApp::sendOsc(int _trigger) {
 
     sender.sendMessage(m);
     std:cout << "*** SENT: " << _trigger << " ***\n";
+    trigger = _trigger == 1;
 }
 
