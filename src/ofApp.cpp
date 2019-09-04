@@ -12,6 +12,9 @@ void ofApp::setup() {
     //gridThreshold = 10;
     
     fader   = 1.618033; // fade with PHI
+    
+    // thresholding of the motion data
+    threshold = 30;
 
     xlen = (int) width / gridWidth;
     ylen = (int) height / gridHeight;
@@ -68,8 +71,6 @@ void ofApp::update() {
             if (gridData[i] > 0) gridData[i] = gridData[i] / fader;
         }
         
-        // thresholding of the motion data
-        int threshold = 127;
         //int threshold = (int) (thresholdKey * 2);
         int row = 0;
         int col = 0;
@@ -134,7 +135,7 @@ void ofApp::sendOsc (int slot, int value) {
     msg.addIntArg(slot);
     msg.addIntArg(value);
 
-    std::cout << slot << " " << value << endl;
+    if (value != 0) std::cout << slot << " " << value << endl;
 
     sender.sendMessage(msg);
 }

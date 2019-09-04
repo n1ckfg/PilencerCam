@@ -15,13 +15,12 @@ class ofApp : public ofBaseApp {
 		char * text;
 		int width;
 		int height;
-		float mousePct;
+		int threshold;
 		int xlen;
 		int ylen;
 		float fader;
 		
 		int threshold;
-		int thresholdKey;
 		
 		// grid
 		int gridData[256];
@@ -30,7 +29,6 @@ class ofApp : public ofBaseApp {
 		bool grid[256];
 		int gridWidth;
 		int gridHeight;
-		int gridThreshold;
 		
 		unsigned char * dataGray;
 		unsigned char * dataGrayCurrent;
