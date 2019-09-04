@@ -33,7 +33,7 @@ void ofApp::setup() {
         buff.set(compname.c_str(), compname.size());
         ofBufferToFile("compname.txt", buff);
     }
-    std::cout << compname;
+    std::cout << compname << "\n";
 
     w = 160;
     h = 120;
@@ -81,7 +81,7 @@ void ofApp::setup() {
     markTime = 0;
     trigger = false;
     isMoving = false;
-    
+
     sendOsc(0);
 }
 
