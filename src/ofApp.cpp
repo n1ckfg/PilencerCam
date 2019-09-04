@@ -76,6 +76,8 @@ void ofApp::setup() {
     minDistance = 4;   // 1 to 16
 
     avgMotion = 0;
+
+    sendOsc(0);
 }
 
 void ofApp::update() {
@@ -130,20 +132,17 @@ void ofApp::draw() {
     ofSetColor(255);
     ofBackground(0);
     
-    if(!frame.empty()) {
-        if (debug) {
-		    drawMat(frame,0, 0, w * 4, h * 4);
-		    curFlow->draw(0, 0, w * 4, h * 4);
-    	}
-	}
-
     if (debug) {
+        if(!frame.empty()) {
+    	    drawMat(frame,0, 0, w * 4, h * 4);
+    	    curFlow->draw(0, 0, w * 4, h * 4);
+    	}
+
         stringstream info;
         info << "FPS: " << ofGetFrameRate() << "\n";
         //info << "Camera Resolution: " << cam.width << "x" << cam.height << " @ "<< "xx" <<"FPS"<< "\n";
         ofDrawBitmapStringHighlight(info.str(), 10, 10, ofColor::black, ofColor::yellow);
     }
-   
 }
 
 
