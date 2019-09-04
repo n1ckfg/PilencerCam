@@ -83,8 +83,6 @@ void ofApp::setup() {
 }
 
 void ofApp::update() {
-	if (!isMoving) counter = 0;
-
     frame = cam.grab();
 
     if (!frame.empty()) {
@@ -138,9 +136,12 @@ void ofApp::update() {
 	        }  
         } else if (trigger && isMoving) { // triggered, reset timer as long as motion is detected
             markTime = t;
-    	} else if (trigger && !isMoving && t > markTime + timeDelay) { // triggered, timer has run out
-    		trigger = false;
-	        curFlow->resetFlow();
+    	} else if (trigger && !isMoving) {
+    		counter = 0;
+	    	curFlow->resetFlow();
+	     	if (t > markTime + timeDelay) { // triggered, timer has run out
+    			trigger = false;
+    		}
         }
 
         sendOsc();
