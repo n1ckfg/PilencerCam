@@ -46,7 +46,6 @@ class ofApp : public ofBaseApp {
 	    int timeDelay;
 	    int markTime;
 	    bool trigger;
-	    bool sendPosition;
 	    float motionVal;
 	    ofVec2f motionValRaw;
 	    bool isMoving;

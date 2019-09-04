@@ -16,7 +16,6 @@ void ofApp::setup() {
     port = settings.getValue("settings:port", 7110);
     
     debug = (bool) settings.getValue("settings:debug", 1);
-    sendPosition = (bool) settings.getValue("settings:send_position", 0);
 
     sender.setup(host, port);
 
@@ -133,7 +132,6 @@ void ofApp::update() {
         	} else { // motion frames have reached trigger threshold
                 markTime = t;
 	        	trigger = true;
-		        if (!sendPosition) sendOsc();
 	        }  
         } else if (trigger && isMoving) { // triggered, reset timer as long as motion is detected
             markTime = t;
@@ -142,11 +140,10 @@ void ofApp::update() {
 	    	curFlow->resetFlow();
 	     	if (t > markTime + timeDelay) { // triggered, timer has run out
     			trigger = false;
-		        if (!sendPosition) sendOsc();
     		}
         }
 
-        if (sendPosition) sendOsc();
+        sendOsc();
     }
 }
 
@@ -171,13 +168,8 @@ void ofApp::sendOsc() {
 	ofxOscMessage msg;
     msg.setAddress("/pilencer");
     msg.addStringArg(compname);
-    msg.addIntArg((int) trigger);
-    
-    if (sendPosition) {
-	    msg.addFloatArg(motionVal);
-    	msg.addFloatArg(motionValRaw.x);
-    	msg.addFloatArg(motionValRaw.y);
-	}
+    msg.addIntArg((int) trigger);  
+    msg.addFloatArg(motionVal);
 
     sender.sendMessage(msg);
     std:cout << "*** SENT: " << trigger << " ***\n";

@@ -6,7 +6,6 @@
     <height>120</height>
     <framerate>60</framerate>
     <debug>0</debug>
-    <send_position>0</send_position>
     <dense_flow>1</dense_flow>
     <!-- * -->
     <!-- trigger settings -->
