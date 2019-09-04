@@ -109,16 +109,19 @@ void ofApp::update() {
 
         if (useFarneback) {
         	motionValRaw = farneback.getAverageFlow();
-            motionVal = (abs(motionValRaw.x) + abs(motionValRaw.y)) / 2.0;
     	} else {
-    		motionValRaw = 0;
+    		motionValRaw = ofVec2f(0,0);
     		std::vector<ofVec2f> points = pyrLk.getMotion();
+
     		for (int i=0; i<points.size(); i++) {
-    			motionValRaw += (abs(points[i].x) + abs(points[i].y)) / 2.0;
+    			motionValRaw.x += points[i].x;
+    			motionValRaw.y += points[i].y;
     		}  
-        	motionVal = motionValRaw / (float) points.size(); 
+    		motionValRaw.x /= (float) points.size();
+    		motionValRaw.y /= (float) points.size();
     	}
 
+        motionVal = (abs(motionValRaw.x) + abs(motionValRaw.y)) / 2.0;
         isMoving = motionVal > triggerThreshold;
         std::cout << "val: " << motionVal << " motion: " << isMoving << endl;
    
