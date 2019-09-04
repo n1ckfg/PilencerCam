@@ -133,6 +133,7 @@ void ofApp::update() {
         	} else { // motion frames have reached trigger threshold
                 markTime = t;
 	        	trigger = true;
+		        if (!sendPosition) sendOsc();
 	        }  
         } else if (trigger && isMoving) { // triggered, reset timer as long as motion is detected
             markTime = t;
@@ -141,10 +142,11 @@ void ofApp::update() {
 	    	curFlow->resetFlow();
 	     	if (t > markTime + timeDelay) { // triggered, timer has run out
     			trigger = false;
+		        if (!sendPosition) sendOsc();
     		}
         }
 
-        sendOsc();
+        if (sendPosition) sendOsc();
     }
 }
 
