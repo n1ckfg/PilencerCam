@@ -22,8 +22,9 @@ class ofApp : public ofBaseApp {
 		ofFile file;
 		ofxXmlSettings settings;
 
+		// https://web.archive.org/web/20130520103418/http://opencv.willowgarage.com/documentation/cpp/motion_analysis_and_object_tracking.html
 	    ofxCv::FlowFarneback farneback;
-	    //ofxCv::FlowPyrLK pyrLk;
+	    ofxCv::FlowPyrLK pyrLk;
 	    ofxCv::Flow* curFlow;
 	    int width;
 	    int height;
@@ -34,7 +35,7 @@ class ofApp : public ofBaseApp {
 	    int polyN;
 	    float polySigma;
 	    bool OPTFLOW_FARNEBACK_GAUSSIAN;
-	    //bool useFarneback;
+	    bool useFarneback;
 	    int winSize;
 	    int maxLevel;
 	    int maxFeatures;
@@ -46,8 +47,8 @@ class ofApp : public ofBaseApp {
 	    int markTime;
 	    bool trigger;
 	    bool sendPosition;
-	    float avgMotion;
-	    ofVec2f avgRaw;
+	    float motionVal;
+	    ofVec2f motionValRaw;
 	    bool isMoving;
 	    int counter;
 	    int counterMax;
@@ -73,7 +74,6 @@ class ofApp : public ofBaseApp {
 		//bool doDrawInfo;
 
 		ofxOscSender sender;
-		void sendOsc(int _trigger);
-		void sendOscPosition(float x, float y);
+		void sendOsc();
 
 };

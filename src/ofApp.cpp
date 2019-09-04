@@ -6,7 +6,6 @@ using namespace ofxCv;
 void ofApp::setup() {
     settings.loadFile("settings.xml");
 
-    //doDrawInfo  = true; 
     ofSetVerticalSync(false);    
     framerate = settings.getValue("settings:framerate", 60); 
     width = settings.getValue("settings:width", 160); 
@@ -35,7 +34,7 @@ void ofApp::setup() {
         buff.set(compname.c_str(), compname.size());
         ofBufferToFile("compname.txt", buff);
     }
-    std::cout << compname << "\n";
+    std::cout << compname << endl;
 
     cam.setup(width, height, false); // color/gray;
 
@@ -62,6 +61,7 @@ void ofApp::setup() {
     //cam.setFrameRate // not implemented in ofxCvPiCam
 
     // ~ ~ ~   optical flow settings   ~ ~ ~
+    useFarneback = true;
     pyrScale = 0.5;   // 0 to 1, default 0.5
     levels = 4;   // 1 to 8, default 4
     winsize = 8;   // 4 to 64, default 8
@@ -69,14 +69,13 @@ void ofApp::setup() {
     polyN = 7;   // 5 to 10, default 7
     polySigma = 1.5;   // 1.1 to 2, default 
     OPTFLOW_FARNEBACK_GAUSSIAN = false; // default false
-    //useFarneback = true;
     winSize = 32;   // 4 to 64, default 32
     maxLevel = 3;   // 0 to 8, default 3
     maxFeatures = 200;   // 1 to 1000, default 200
     qualityLevel = 0.01;   // 0.001 to 0.02, default 0.01
     minDistance = 4;   // 1 to 16, default 4
 
-    avgMotion = 0;
+    motionVal = 0;
     counter = 0;
     markTime = 0;
     trigger = false;
@@ -87,18 +86,16 @@ void ofApp::update() {
     frame = cam.grab();
 
     if (!frame.empty()) {
-        //if (useFarneback) {
-		curFlow = &farneback;
-        farneback.setPyramidScale( pyrScale );
-        farneback.setNumLevels( levels );
-        farneback.setWindowSize( winsize );
-        farneback.setNumIterations( iterations );
-        farneback.setPolyN( polyN );
-        farneback.setPolySigma( polySigma );
-        farneback.setUseGaussian( OPTFLOW_FARNEBACK_GAUSSIAN );
-		//} 
-		/*
-		else {
+        if (useFarneback) {
+			curFlow = &farneback;
+	        farneback.setPyramidScale( pyrScale );
+	        farneback.setNumLevels( levels );
+	        farneback.setWindowSize( winsize );
+	        farneback.setNumIterations( iterations );
+	        farneback.setPolyN( polyN );
+	        farneback.setPolySigma( polySigma );
+	        farneback.setUseGaussian( OPTFLOW_FARNEBACK_GAUSSIAN );
+		} else {
 			curFlow = &pyrLk;
             pyrLk.setMaxFeatures( maxFeatures );
             pyrLk.setQualityLevel( qualityLevel );
@@ -106,25 +103,30 @@ void ofApp::update() {
             pyrLk.setWindowSize( winSize );
             pyrLk.setMaxLevel( maxLevel );
 		}
-		*/
-        //check it out that that you can use Flow polymorphically
+
+        // you can use Flow polymorphically
         curFlow->calcOpticalFlow(frame);
 
-        //if (useFarneback) {
-        avgRaw = farneback.getAverageFlow();
-        avgMotion = (abs(avgRaw.x) + abs(avgRaw.y)) / 2.0;
-        isMoving = avgMotion > triggerThreshold;
-        std::cout << "avg: " << avgMotion << " motion: " << isMoving << "\n";
+        if (useFarneback) {
+        	motionValRaw = farneback.getAverageFlow();
+    	} else {
+        	motionValRaw = pyrLk.getMotion();
+    	}
+
+        motionVal = (abs(motionValRaw.x) + abs(motionValRaw.y)) / 2.0;
+        isMoving = motionVal > triggerThreshold;
+        std::cout << "val: " << motionVal << " motion: " << isMoving << endl;
    
         int t = ofGetElapsedTimeMillis();
 
     	if (!trigger && isMoving) { // motion detected, but not triggered yet
-            	if (counter < counterMax) { // start counting frames
-            		counter++;
-            	} else { // motion frames have reached trigger threshold
-                    markTime = t;
-    	        	trigger = true;
-    	        }  
+        	if (counter < counterMax) { // start counting frames
+        		counter++;
+        	} else { // motion frames have reached trigger threshold
+                curFlow.resetFlow(); // prevent feedback loops
+                markTime = t;
+	        	trigger = true;
+	        }  
         } else if (trigger && isMoving) { // triggered, reset timer as long as motion is detected
             markTime = t;
     	} else if (trigger && !isMoving && t > markTime + timeDelay) { // triggered, timer has run out
@@ -132,13 +134,7 @@ void ofApp::update() {
     		counter = 0;
         }
 
-        if (trigger) {
-            sendOsc(1);    
-        } else {
-            sendOsc(0);
-        }
-
-        if (sendPosition) sendOscPosition(avgRaw.x, avgRaw.y);
+        sendOsc();
     }
 }
 
@@ -153,32 +149,24 @@ void ofApp::draw() {
     	}
 
         stringstream info;
-        info << "FPS: " << ofGetFrameRate() << "\n";
-        //info << "Camera Resolution: " << cam.width << "x" << cam.height << " @ "<< "xx" <<"FPS"<< "\n";
+        info << "FPS: " << ofGetFrameRate() << endl;
         ofDrawBitmapStringHighlight(info.str(), 10, 10, ofColor::black, ofColor::yellow);
     }
 }
 
 
-void ofApp::sendOsc(int _trigger) {
-	ofxOscMessage m;
-    m.setAddress("/pilencer");
-    m.addStringArg(compname);
-    m.addIntArg(_trigger);
-    m.addFloatArg(avgMotion);
+void ofApp::sendOsc() {
+	ofxOscMessage msg;
+    msg.setAddress("/pilencer");
+    msg.addStringArg(compname);
+    msg.addIntArg((int) trigger);
+    
+    if (sendPosition) {
+	    msg.addFloatArg(motionVal);
+    	msg.addFloatArg(motionValRaw.x);
+    	msg.addFloatArg(motionValRaw.y);
+	}
 
-    sender.sendMessage(m);
+    sender.sendMessage(msg);
     std:cout << "*** SENT: " << _trigger << " ***\n";
 }
-
-void ofApp::sendOscPosition(float x, float y) {
-    ofxOscMessage m;
-    m.setAddress("/position");
-    m.addStringArg(compname);
-    m.addFloatArg(x);
-    m.addFloatArg(y);
-
-    sender.sendMessage(m);
-    std:cout << "SENT: " << x << " " << y << "\n";
-}
-
