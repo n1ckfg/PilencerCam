@@ -19,9 +19,7 @@ class ofApp : public ofBaseApp {
 		int xlen;
 		int ylen;
 		float fader;
-		
-		int threshold;
-		
+			
 		// grid
 		int gridData[256];
 		int lastGridData[256];

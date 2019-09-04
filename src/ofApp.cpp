@@ -91,7 +91,7 @@ void ofApp::update() {
             }
         }
     
-        vidTexture.loadData(dataGrayThreshold, width,height, GL_LUMINANCE);
+        vidTexture.loadData(dataGrayThreshold, width, height, GL_LUMINANCE);
                 
         // calculate mean to dedect sudden movements
         //diffMean     = diffSum / width * height;
