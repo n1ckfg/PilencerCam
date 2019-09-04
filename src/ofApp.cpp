@@ -8,9 +8,9 @@ void ofApp::setup() {
 
     //doDrawInfo  = true; 
     ofSetVerticalSync(false);    
-    framerate = settings.getValue("settings:framerate", 30); 
-    width = settings.getValue("settings:width", 640); 
-    height = settings.getValue("settings:height", 480); 
+    framerate = settings.getValue("settings:framerate", 60); 
+    width = settings.getValue("settings:width", 160); 
+    height = settings.getValue("settings:height", 120); 
     ofSetFrameRate(framerate);
 
     host = settings.getValue("settings:host", "127.0.0.1"); 
