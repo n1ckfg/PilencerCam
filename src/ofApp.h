@@ -28,7 +28,6 @@ class ofApp : public ofBaseApp {
 		float contourMinAreaRadius; // default 10
 		float contourMaxAreaRadius; // default 150
 		ofxCv::TrackingColorMode trackingColorMode; // RGB, HSV, H, HS; default RGB
-	    int thresholdValue; // default 127
 
 	    int triggerThreshold;
 	    int timeDelay;

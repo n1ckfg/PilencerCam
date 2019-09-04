@@ -9,7 +9,7 @@
     <trigger_threshold>10</trigger_threshold>
     <trigger_frames>3</trigger_frames>
     <time_delay>10000</time_delay>
-    <threshold>30</threshold>
+    <contour_threshold>30.0</contour_threshold>
     <!-- * -->
     <!-- camera settings -->
     <sharpness>50</sharpness>

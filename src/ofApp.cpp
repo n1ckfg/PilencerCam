@@ -61,10 +61,10 @@ void ofApp::setup() {
     //cam.setFrameRate // not implemented in ofxCvPiCam
 
     // ~ ~ ~   contour settings   ~ ~ ~
-    thresholdValue = settings.getValue("settings:threshold", 127); 
-    contourThreshold = 2.0;
+    contourThreshold = settings.getValue("settings:contour_threshold", 127); 
     contourMinAreaRadius = 1.0;
     contourMaxAreaRadius = 250.0;
+    contourFinder.setThreshold(contourThreshold);
     contourFinder.setMinAreaRadius(contourMinAreaRadius);
     contourFinder.setMaxAreaRadius(contourMaxAreaRadius);
     //contourFinder.setInvert(true); // find black instead of white
@@ -88,7 +88,6 @@ void ofApp::draw() {
             ofNoFill();
         }
 
-        contourFinder.setThreshold(h);
         contourFinder.findContours(frame);
         if (debug) contourFinder.draw();            
 
