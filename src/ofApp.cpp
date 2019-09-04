@@ -15,6 +15,7 @@ void ofApp::setup() {
     port = settings.getValue("settings:port", 7110);
     
     debug = (bool) settings.getValue("settings:debug", 1);
+    sendPosition = (bool) settings.getValue("settings:send_position", 0);
 
     sender.setup(host, port);
 
@@ -79,6 +80,7 @@ void ofApp::setup() {
     counter = 0;
     markTime = 0;
     trigger = false;
+    isMoving = false;
     
     sendOsc(0);
 }
@@ -109,14 +111,16 @@ void ofApp::update() {
 		*/
         //check it out that that you can use Flow polymorphically
         curFlow->calcOpticalFlow(frame);
+
+        //if (useFarneback) {
+        avgRaw = farneback.getAverageFlow();
+        avgMotion = (abs(avgRaw.x) + abs(avgRaw.y)) / 2.0;
+        isMoving = avgMotion > triggerThreshold;
+        std::cout << "avg: " << avgMotion << " motion: " << isMoving << "\n";
+
+        if (sendPosition) sendOscPosition(avgRaw.x, avgRaw.y);
     }
      
-   	//if (useFarneback) {
-	ofVec2f avgRaw = farneback.getAverageFlow();
-	avgMotion = (abs(avgRaw.x) + abs(avgRaw.y)) / 2.0;
-	bool isMoving = avgMotion > triggerThreshold;
-	std::cout << "avg: " << avgMotion << " motion: " << isMoving << "\n";
-
     int t = ofGetElapsedTimeMillis();
 
 	if (!trigger && isMoving) { // motion detected, but not triggered yet
@@ -163,5 +167,16 @@ void ofApp::sendOsc(int _trigger) {
 
     sender.sendMessage(m);
     std:cout << "*** SENT: " << _trigger << " ***\n";
+}
+
+void ofApp::sendOscPosition(float x, float y) {
+    ofxOscMessage m;
+    m.setAddress("/position");
+    m.addStringArg(compname);
+    m.addFloatArg(x);
+    m.addFloatArg(y);
+
+    sender.sendMessage(m);
+    std:cout << "SENT: " << x << " " << y << "\n";
 }
 

@@ -44,7 +44,10 @@ class ofApp : public ofBaseApp {
 	    int timeDelay;
 	    int markTime;
 	    bool trigger;
+	    bool sendPosition;
 	    float avgMotion;
+	    ofVec2f avgRaw;
+	    bool isMoving;
 	    int counter;
 	    int counterMax;
 
@@ -70,5 +73,6 @@ class ofApp : public ofBaseApp {
 
 		ofxOscSender sender;
 		void sendOsc(int _trigger);
+		void sendOscPosition(float x, float y);
 
 };
