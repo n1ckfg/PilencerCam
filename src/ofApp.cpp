@@ -3,140 +3,142 @@
 using namespace cv;
 using namespace ofxCv;
 
+//--------------------------------------------------------------
 void ofApp::setup() {
-    settings.loadFile("settings.xml");
+    // basic values
+    ofSeedRandom();
+    width = ofGetWidth();
+    height = ofGetHeight();
 
-    //doDrawInfo  = true; 
-    ofSetVerticalSync(false);    
-    width = ofGetWidth(); 
-    height = ofGetHeight(); 
-    framerate = settings.getValue("settings:framerate", 60); 
-    ofSetFrameRate(framerate);
-
-    host = settings.getValue("settings:host", "127.0.0.1"); 
-    port = settings.getValue("settings:port", 7110);
+    gridWidth  = 5;
+    gridHeight = 5;
+    //gridThreshold = 10;
     
-    debug = (bool) settings.getValue("settings:debug", 1);
+    fader   = 1.618033; // fade with PHI
 
-    sender.setup(host, port);
+    xlen = (int) width / gridWidth;
+    ylen = (int) height / gridHeight;
 
-    // ~ ~ ~   get a persistent name for this computer   ~ ~ ~
-    compname = "RPi";
-    file.open(ofToDataPath("compname.txt"), ofFile::ReadWrite, false);
-    ofBuffer buff;
-    if (file) { // use existing file if it's there
-        buff = file.readToBuffer();
-        compname = buff.getText();
-    } else { // otherwise make a new one
-        compname += "_" + ofGetTimestampString("%y%m%d%H%M%S%i");
-        ofStringReplace(compname, "\n", "");
-        ofStringReplace(compname, "\r", "");
-        buff.set(compname.c_str(), compname.size());
-        ofBufferToFile("compname.txt", buff);
-    }
-    std::cout << compname << "\n";
+    // komplexere datenstrukturen, groessen initialisieren
+    dataGrayCurrent = new unsigned char[width*height]; // grarray
+    dataGrayPast = new unsigned char[width*height]; // grarray
+    dataGrayDiff = new unsigned char[width*height]; // grarray
+    dataGrayThreshold = new unsigned char[width*height]; // grarray
+    
+    omxCameraSettings.width = width;
+    omxCameraSettings.height = height;
+    omxCameraSettings.framerate = 30;
+    omxCameraSettings.enableTexture = true;
+    omxCameraSettings.enablePixels = true;
+    vidGrabber.setup(omxCameraSettings);
+    vidTexture.allocate(width,height, GL_RGB);
 
-    cam.setup(width, height, true); // color/gray;
-
-    triggerThreshold = settings.getValue("settings:trigger_threshold", 10);
-    counterMax = settings.getValue("settings:trigger_frames", 3);
-    timeDelay = settings.getValue("settings:time_delay", 5000);
-
-    // ~ ~ ~   cam settings   ~ ~ ~
-    camSharpness = settings.getValue("settings:sharpness", 0); 
-    camContrast = settings.getValue("settings:contrast", 0); 
-    camBrightness = settings.getValue("settings:brightness", 50); 
-    camIso = settings.getValue("settings:iso", 300); 
-    camExposureMode = settings.getValue("settings:exposure_mode", 0); 
-    camExposureCompensation = settings.getValue("settings:exposure_compensation", 0); 
-    camShutterSpeed = settings.getValue("settings:shutter_speed", 0);
-
-    cam.setSharpness(camSharpness);
-    cam.setContrast(camContrast);
-    cam.setBrightness(camBrightness);
-    cam.setISO(camIso);
-    cam.setExposureMode((MMAL_PARAM_EXPOSUREMODE_T) camExposureMode);
-    cam.setExposureCompensation(camExposureCompensation);
-    cam.setShutterSpeed(camShutterSpeed);
-    //cam.setFrameRate // not implemented in ofxCvPiCam
-
-    // ~ ~ ~   contour settings   ~ ~ ~
-    contourThreshold = settings.getValue("settings:contour_threshold", 127); 
-    contourMinAreaRadius = 1.0;
-    contourMaxAreaRadius = 250.0;
-    contourFinder.setThreshold(contourThreshold);
-    contourFinder.setMinAreaRadius(contourMinAreaRadius);
-    contourFinder.setMaxAreaRadius(contourMaxAreaRadius);
-    //contourFinder.setInvert(true); // find black instead of white
-    trackingColorMode = TRACK_COLOR_RGB;
-
-    avgMotion = 0;
-    counter = 0;
-    markTime = 0;
-    trigger = false;
-    isMoving = false;
+    oscSender.setup("BrazilV.local", 7110);
 }
 
+
+//--------------------------------------------------------------
 void ofApp::update() {
-    frame = cam.grab();
+    int channels = 3;
+    int totalBytes = width * height * channels;
+    int counter = 0;
+
+    // set background black
+    ofBackground(0,0,0);
+    
+    vidGrabber.grab();
+    
+    // motion dedection action
+    if (vidGrabber.isFrameNew()) {
+        unsigned char * pixels = vidGrabber.getPixels();
+
+        // convert to gray with supersimple-average-all-channels geayscale converter
+        for (int i = 0; i < totalBytes; i += channels){
+            int ave = 0;
+            for (int curByte =0;curByte < 3; curByte++) {
+                ave += pixels[i + curByte];
+            }
+            ave = (ave / 3);
+            dataGrayCurrent[counter] = ave;
+            counter++;
+        }
+        
+    
+        // get the difference between this frame and the last frame
+        for (int i = 0; i < width*height; i++){
+            dataGrayDiff[i] = abs( dataGrayCurrent[i] - dataGrayPast[i] );
+        }
+
+        //fade grid
+        for (int i = 0; i < gridHeight * gridWidth; i++) {
+            if (gridData[i] > 0) gridData[i] = gridData[i] / fader;
+        }
+        
+        // thresholding of the motion data
+        int threshold = (int) (mousePct * 255);
+        //int threshold = (int) (thresholdKey * 2);
+        int row = 0;
+        int col = 0;
+
+        // weigh gridData Elements against threshold
+        for (int i=0; i<height; i++){
+            for (int j=0; j<width; j++){
+                row = (int) ((height - i) * gridHeight / height);
+                col = (int) ((width - j) * gridWidth / width);
+
+                if(dataGrayDiff[width * i + j] < threshold)
+                    dataGrayThreshold[width * i + j] = 0;
+                else {
+                    dataGrayThreshold[width * i + j] = 255;
+                    gridData[row * gridWidth + col]++;
+                    //diffSum++;
+                }
+            }
+        }
+    
+        vidTexture.loadData(dataGrayThreshold, width,height, GL_LUMINANCE);
+                
+        // calculate mean to dedect sudden movements
+        //diffMean     = diffSum / width * height;
+        //historyMean  = (lastDiffMean + diffMean) / 2;
+        //lastDiffMean = diffMean;
+    }
+    
+    //update dataGrayPast
+    memcpy(dataGrayPast, dataGrayCurrent, width*height);
 }
 
-void ofApp::draw() { 
-    if (!frame.empty()) { 
-        if (debug) {
-            ofSetLineWidth(2);
-            ofNoFill();
+//--------------------------------------------------------------
+void ofApp::draw(){
+    int row = 0;
+    int xpos = 0;
+    int ypos = screenHeight;
+
+//  vidTexture.draw(360,20,width,height);
+
+
+    for (int i = 0; i < gridHeight * gridWidth; i++ ) {
+        if (i % gridWidth == 0) row++;
+//      cout << (xlen * ylen * (movementThreshold / 100.0f)) << " " << endl;
+        if (gridData[i] > 0 ) {
+        //cout << i << " - " << gridData[i] << " " << endl;
+            xpos = (int) (i % gridWidth) * xlen;
+            ypos = (int) (screenHeight - row * ylen);
+            ofSetColor(0, 0, gridData[i] / 2);
+            ofRect( xpos, ypos, xlen, ylen);
         }
-
-        contourFinder.findContours(frame);
-        if (debug) contourFinder.draw();            
-
-        int contourCounter = contourFinder.size();   
-
-        isMoving = contourCounter > triggerThreshold;
-
-        int t = ofGetElapsedTimeMillis();
-
-        if (!trigger && isMoving) { // motion detected, but not triggered yet
-                if (counter < counterMax) { // start counting frames
-                    counter++;
-                } else { // motion frames have reached trigger threshold
-                    markTime = t;
-                    trigger = true;
-                }  
-        } else if (trigger && isMoving) { // triggered, reset timer as long as motion is detected
-            markTime = t;
-        } else if (trigger && !isMoving && t > markTime + timeDelay) { // triggered, timer has run out
-            trigger = false;
-            counter = 0;
-        }
-
-        if (trigger) {
-            sendOsc(1);    
-        } else {
-            sendOsc(0);
-        }
-
-        if (debug) std::cout << "contours: " << contourCounter << "   isMoving: " << isMoving << "   trigger: " << trigger << "\n";
+        
+        sendOsc(i, gridData[i]);
     }
 
-    if (debug) {
-        stringstream info;
-        info << "FPS: " << ofGetFrameRate() << "\n";
-        //info << "Camera Resolution: " << cam.width << "x" << cam.height << " @ "<< "xx" <<"FPS"<< "\n";
-        ofDrawBitmapStringHighlight(info.str(), 10, 10, ofColor::black, ofColor::yellow);
-    }
 }
 
+void ofApp::sendOsc (int slot, int value) {
+    ofxOscMessage msg;
 
-void ofApp::sendOsc(int _trigger) {
-	ofxOscMessage m;
-    m.setAddress("/pilencer");
-    m.addStringArg(compname);
-    m.addIntArg(_trigger);
+    msg.setAddress("/ctrl");
+    msg.addIntArg(slot);
+    msg.addIntArg(value);
 
-    sender.sendMessage(m);
-    std:cout << "*** SENT: " << _trigger << " ***\n";
+    oscSender.sendMessage(msg);
 }
-
-

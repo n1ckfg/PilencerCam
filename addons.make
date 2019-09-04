@@ -1,5 +1,3 @@
-ofxCv
-ofxCvPiCam
-ofxOpenCv
+ofxRPiCameraVideoGrabber
 ofxOsc
 ofxXmlSettings
