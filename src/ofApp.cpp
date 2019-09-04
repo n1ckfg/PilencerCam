@@ -25,7 +25,6 @@ void ofApp::setup() {
     omxCameraSettings.width = width;
     omxCameraSettings.height = height;
     omxCameraSettings.framerate = 30;
-    omxCameraSettings.enableTexture = true;
     omxCameraSettings.enablePixels = true;
     vidGrabber.setup(omxCameraSettings);
     vidTexture.allocate(width,height, GL_RGB);
@@ -42,9 +41,7 @@ void ofApp::update() {
 
     // set background black
     ofBackground(0,0,0);
-    
-    vidGrabber.grab();
-    
+      
     // motion dedection action
     if (vidGrabber.isFrameNew()) {
         unsigned char * pixels = vidGrabber.getPixels();
@@ -109,7 +106,7 @@ void ofApp::update() {
 void ofApp::draw(){
     int row = 0;
     int xpos = 0;
-    int ypos = screenHeight;
+    int ypos = height;
 
 //  vidTexture.draw(360,20,width,height);
 
@@ -120,7 +117,7 @@ void ofApp::draw(){
         if (gridData[i] > 0 ) {
         //cout << i << " - " << gridData[i] << " " << endl;
             xpos = (int) (i % gridWidth) * xlen;
-            ypos = (int) (screenHeight - row * ylen);
+            ypos = (int) (height - row * ylen);
             ofSetColor(0, 0, gridData[i] / 2);
             ofRect( xpos, ypos, xlen, ylen);
         }
