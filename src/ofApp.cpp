@@ -111,9 +111,9 @@ void ofApp::update() {
 	avgMotion = (abs(avgRaw.x) + abs(avgRaw.y)) / 2.0;
 	bool isMoving = avgMotion > triggerThreshold;
 	std::cout << "avg: " << avgMotion << " motion: " << isMoving << "\n";
-	
+
+    int t = ofGetElapsedTimeMillis();
 	if (isMoving) {
-        int t = ofGetElapsedTimeMillis();
 		markTime = t;
 
         if (!trigger) {
