@@ -134,5 +134,7 @@ void ofApp::sendOsc (int slot, int value) {
     msg.addIntArg(slot);
     msg.addIntArg(value);
 
+    std::cout << slot << " " << value << endl;
+
     sender.sendMessage(msg);
 }
