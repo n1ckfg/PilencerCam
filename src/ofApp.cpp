@@ -61,7 +61,7 @@ void ofApp::setup() {
     //cam.setFrameRate // not implemented in ofxCvPiCam
 
     // ~ ~ ~   optical flow settings   ~ ~ ~
-    useFarneback = true;
+    useFarneback = (bool) settings.getValue("settings:dense_flow", 0);
     pyrScale = 0.5;   // 0 to 1, default 0.5
     levels = 4;   // 1 to 8, default 4
     winsize = 8;   // 4 to 64, default 8
@@ -109,11 +109,16 @@ void ofApp::update() {
 
         if (useFarneback) {
         	motionValRaw = farneback.getAverageFlow();
+            motionVal = (abs(motionValRaw.x) + abs(motionValRaw.y)) / 2.0;
     	} else {
-        	motionValRaw = pyrLk.getMotion();
+    		motionValRaw = 0;
+    		std::vector<ofVec2f> points = pyrLk.getMotion();
+    		for (int i=0; i<points.size(); i++) {
+    			motionValRaw += (abs(points[i].x) + abs(points[i].y)) / 2.0;
+    		}  
+        	motionVal = motionValRaw / (float) points.size(); 
     	}
 
-        motionVal = (abs(motionValRaw.x) + abs(motionValRaw.y)) / 2.0;
         isMoving = motionVal > triggerThreshold;
         std::cout << "val: " << motionVal << " motion: " << isMoving << endl;
    
