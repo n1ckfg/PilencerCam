@@ -9,15 +9,15 @@
     <send_position>0</send_position>
     <!-- * -->
     <!-- trigger settings -->
-    <trigger_threshold>0.009</trigger_threshold>
-    <trigger_frames>4</trigger_frames>
+    <trigger_threshold>0.01</trigger_threshold>
+    <trigger_frames>3</trigger_frames>
     <time_delay>10000</time_delay>
     <!-- * -->
     <!-- camera settings -->
-    <sharpness>0</sharpness>
+    <sharpness>50</sharpness>
 	<contrast>0</contrast>
 	<brightness>50</brightness>
-	<iso>100</iso>
+	<iso>800</iso>
 	<exposure_mode>0</exposure_mode>
     <exposure_compensation>0</exposure_compensation>
 	<shutter_speed>100000</shutter_speed>
