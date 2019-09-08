@@ -38,6 +38,7 @@ void ofApp::setup() {
     cam.setup(width, height, false); // color/gray;
 
     triggerThreshold = settings.getValue("settings:trigger_threshold", 0.5);
+    flowResetThreshold = settings.getValue("settings:flow_reset_threshold", 1.0);
     counterMax = settings.getValue("settings:trigger_frames", 3);
     timeDelay = settings.getValue("settings:time_delay", 5000);
     counterDelay = settings.getValue("settings:counter_reset", 1000);
@@ -126,10 +127,14 @@ void ofApp::update() {
         motionVal = (abs(motionValRaw.x) + abs(motionValRaw.y)) / 2.0;
         isMoving = motionVal > triggerThreshold;
         std::cout << "val: " << motionVal << " motion: " << isMoving << endl;
+
+        // optical flow can get stuck in feedback loops
+        if (motionVal > flowResetThreshold) curFlow->resetFlow();
    
         int t = ofGetElapsedTimeMillis();
         
         if (t > markCounterTime + counterDelay) {
+            curFlow->resetFlow();
             counterOn = 0;
             counterOff = 0;
         }

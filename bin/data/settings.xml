@@ -14,6 +14,7 @@
     <trigger_frames>3</trigger_frames>
     <time_delay>10000</time_delay>
     <counter_reset>1000</counter_reset>
+    <flow_reset_threshold>1.0</flow_reset_threshold>
     <!-- * -->
     <!-- camera settings -->
     <sharpness>50</sharpness>
