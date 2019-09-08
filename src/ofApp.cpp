@@ -75,7 +75,8 @@ void ofApp::setup() {
     minDistance = 4;   // 1 to 16, default 4
 
     motionVal = 0;
-    counter = 0;
+    counterOn = 0;
+    counterOff = 0;
     markTime = 0;
     trigger = false;
     isMoving = false;
@@ -127,20 +128,24 @@ void ofApp::update() {
         int t = ofGetElapsedTimeMillis();
 
     	if (!trigger && isMoving) { // motion detected, but not triggered yet
-        	if (counter < counterMax) { // start counting frames
-        		counter++;
-        	} else { // motion frames have reached trigger threshold
+        	if (counterOn < counterMax) { // start counting on frames
+        		counterOn++;
+        	} else { // trigger on
                 markTime = t;
 	        	trigger = true;
 	        }  
-        } else if (trigger && isMoving) { // triggered, reset timer as long as motion is detected
+        } else if (trigger && isMoving) { // reset count and timer as long as motion is detected
             markTime = t;
-    	} else if (trigger && !isMoving) {
-    		counter = 0;
-	    	curFlow->resetFlow();
-	     	if (t > markTime + timeDelay) { // triggered, timer has run out
-    			trigger = false;
-    		}
+            counterOn = 0;
+            counterOff = 0;
+    	} else if (trigger && !isMoving && t > markTime + timeDelay) {
+            if (counterOff < counterMax) { // start counting off frames
+                counterOff++;
+            } else { // trigger off
+                curFlow->resetFlow();
+                trigger = false;
+            }  
+
         }
 
         sendOsc();

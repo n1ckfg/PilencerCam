@@ -49,7 +49,8 @@ class ofApp : public ofBaseApp {
 	    float motionVal;
 	    ofVec2f motionValRaw;
 	    bool isMoving;
-	    int counter;
+	    int counterOn;
+	    int counterOff;
 	    int counterMax;
 
 		ofxCvPiCam cam;
