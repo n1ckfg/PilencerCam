@@ -62,6 +62,7 @@ void ofApp::setup() {
 
     // ~ ~ ~   optical flow settings   ~ ~ ~
     useFarneback = (bool) settings.getValue("settings:dense_flow", 1);
+    sendMotionInfo = (bool) settings.getValue("settings:send_motion_info", 1);
     pyrScale = 0.5;   // 0 to 1, default 0.5
     levels = 4;   // 1 to 8, default 4
     winsize = 8;   // 4 to 64, default 8
@@ -177,10 +178,16 @@ void ofApp::draw() {
 
 void ofApp::sendOsc() {
 	ofxOscMessage msg;
+
     msg.setAddress("/pilencer");
     msg.addStringArg(compname);
-    msg.addIntArg((int) trigger);  
-    msg.addFloatArg(motionVal);
+    msg.addIntArg((int) trigger);
+
+    if (sendMotionInfo) {
+        msg.addFloatArg(motionVal); // total motion, always positive
+        msg.addFloatArg(motionValRaw.x); // x change
+        msg.addFloatArg(motionValRaw.y); // y change
+    }  
 
     sender.sendMessage(msg);
     std:cout << "*** SENT: " << trigger << " ***\n";

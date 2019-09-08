@@ -7,6 +7,7 @@
     <framerate>60</framerate>
     <debug>0</debug>
     <dense_flow>1</dense_flow>
+    <send_motion_info>0</send_motion_info>
     <!-- * -->
     <!-- trigger settings -->
     <trigger_threshold>0.005</trigger_threshold>

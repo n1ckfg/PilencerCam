@@ -36,6 +36,7 @@ class ofApp : public ofBaseApp {
 	    float polySigma;
 	    bool OPTFLOW_FARNEBACK_GAUSSIAN;
 	    bool useFarneback;
+	    bool sendMotionInfo;
 	    int winSize;
 	    int maxLevel;
 	    int maxFeatures;
