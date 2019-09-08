@@ -128,12 +128,6 @@ void ofApp::update() {
         isMoving = motionVal > triggerThreshold;
         std::cout << "val: " << motionVal << " motion: " << isMoving << endl;
 
-        // optical flow can get stuck in feedback loops
-        if (motionVal > flowResetThreshold) {
-            curFlow->resetFlow();
-            trigger = false;
-        }
-
         int t = ofGetElapsedTimeMillis();
         
         // reset count if too much time has elapsed since the last change
@@ -143,28 +137,36 @@ void ofApp::update() {
         }
 
         // motion detection logic
-    	if (!trigger && isMoving) { // motion detected, but not triggered yet
-        	if (counterOn < counterMax) { // start counting the "on" frames
+        // 1. motion detected, but not triggered yet
+    	if (!trigger && isMoving) {
+        	if (counterOn < counterMax) { // start counting the ON frames
         		counterOn++;
                 markCounterTime = t;
-        	} else { // trigger is ON, reset count and timer
+        	} else { // trigger is ON
                 markTriggerTime = t;
 	        	trigger = true;
 	        }  
-        } else if (trigger && isMoving) { // keep resetting count and timer as long as motion is detected
+        // 2. motion is triggered
+        } else if (trigger && isMoving) { // keep resetting timer as long as motion is detected
             markTriggerTime = t;
+        // 3. motion no longer detected
     	} else if (trigger && !isMoving && t > markTriggerTime + timeDelay) {
-            if (counterOff < counterMax) { // start counting the "off" frames
+            if (counterOff < counterMax) { // start counting the OFF frames
                 counterOff++;
                 markCounterTime = t;
-            } else { // trigger is OFF, reset count and timer
-                curFlow->resetFlow();
+            } else { // trigger is OFF
                 trigger = false;
             }  
 
         }
 
         sendOsc();
+    }
+
+    // optical flow can get stuck in feedback loops
+    if (motionVal > flowResetThreshold) {
+        curFlow->resetFlow();
+        trigger = false;
     }
 }
 
