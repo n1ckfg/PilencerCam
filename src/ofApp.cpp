@@ -134,7 +134,6 @@ void ofApp::update() {
         int t = ofGetElapsedTimeMillis();
         
         if (t > markCounterTime + counterDelay) {
-            curFlow->resetFlow();
             counterOn = 0;
             counterOff = 0;
         }
