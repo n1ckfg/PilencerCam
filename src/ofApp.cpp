@@ -131,10 +131,7 @@ void ofApp::update() {
         int t = ofGetElapsedTimeMillis();
         
         // reset count if too much time has elapsed since the last change
-        if (t > markCounterTime + counterDelay) {
-            counterOn = 0;
-            counterOff = 0;
-        }
+        if (t > markCounterTime + counterDelay) counterOn = 0;
 
         // motion detection logic
         // 1. motion detected, but not triggered yet
@@ -151,13 +148,7 @@ void ofApp::update() {
             markTriggerTime = t;
         // 3. motion no longer detected
     	} else if (trigger && !isMoving && t > markTriggerTime + timeDelay) {
-            if (counterOff < counterMax) { // start counting the OFF frames
-                counterOff++;
-                markCounterTime = t;
-            } else { // trigger is OFF
-                trigger = false;
-            }  
-
+            trigger = false;
         }
 
         sendOsc();

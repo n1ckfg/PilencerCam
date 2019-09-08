@@ -54,7 +54,6 @@ class ofApp : public ofBaseApp {
 	    glm::vec2 motionValRaw;
 	    bool isMoving;
 	    int counterOn;
-	    int counterOff;
 	    int counterMax;
 
 		ofxCvPiCam cam;
