@@ -129,32 +129,43 @@ void ofApp::update() {
         std::cout << "val: " << motionVal << " motion: " << isMoving << endl;
 
         // optical flow can get stuck in feedback loops
-        if (motionVal > flowResetThreshold) curFlow->resetFlow();
-   
+        if (motionVal > flowResetThreshold) {
+            curFlow->resetFlow();
+            trigger = false;
+            counterOn = 0;
+            counterOff = 0;
+        }
+
         int t = ofGetElapsedTimeMillis();
         
+        // reset count if too much time has elapsed since the last change
         if (t > markCounterTime + counterDelay) {
             counterOn = 0;
             counterOff = 0;
         }
 
+        // motion detection logic
     	if (!trigger && isMoving) { // motion detected, but not triggered yet
-        	if (counterOn < counterMax) { // start counting on frames
+        	if (counterOn < counterMax) { // start counting the "on" frames
         		counterOn++;
                 markCounterTime = t;
-        	} else { // trigger on
+        	} else { // trigger is ON, reset count and timer
                 markTriggerTime = t;
 	        	trigger = true;
+                counterOn = 0;
+                counterOff = 0;
 	        }  
-        } else if (trigger && isMoving) { // reset count and timer as long as motion is detected
+        } else if (trigger && isMoving) { // keep resetting count and timer as long as motion is detected
             markTriggerTime = t;
     	} else if (trigger && !isMoving && t > markTriggerTime + timeDelay) {
-            if (counterOff < counterMax) { // start counting off frames
+            if (counterOff < counterMax) { // start counting the "off" frames
                 counterOff++;
                 markCounterTime = t;
-            } else { // trigger off
+            } else { // trigger is OFF, reset count and timer
                 curFlow->resetFlow();
                 trigger = false;
+                counterOn = 0;
+                counterOff = 0;
             }  
 
         }
@@ -187,6 +198,7 @@ void ofApp::sendOsc() {
     msg.addStringArg(compname);
     msg.addIntArg((int) trigger);
 
+    // if you're only detecting motion, leave this off to save bandwidth
     if (sendMotionInfo) {
         msg.addFloatArg(motionVal); // total motion, always positive
         msg.addFloatArg(motionValRaw.x); // x change
