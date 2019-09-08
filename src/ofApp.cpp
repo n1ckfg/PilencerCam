@@ -110,8 +110,8 @@ void ofApp::update() {
         if (useFarneback) {
         	motionValRaw = farneback.getAverageFlow();
     	} else {
-    		motionValRaw = ofVec2f(0,0);
-    		std::vector<ofVec2f> points = pyrLk.getMotion();
+    		motionValRaw = glm::vec2(0,0);
+    		auto points = pyrLk.getMotion();
 
     		for (int i=0; i<points.size(); i++) {
     			motionValRaw.x += points[i].x;
