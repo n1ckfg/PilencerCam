@@ -47,7 +47,7 @@ class ofApp : public ofBaseApp {
 	    int markTime;
 	    bool trigger;
 	    float motionVal;
-	    ofVec2f motionValRaw;
+	    glm::vec2 motionValRaw;
 	    bool isMoving;
 	    int counter;
 	    int counterMax;
