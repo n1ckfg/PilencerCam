@@ -40,6 +40,7 @@ void ofApp::setup() {
     triggerThreshold = settings.getValue("settings:trigger_threshold", 0.5);
     counterMax = settings.getValue("settings:trigger_frames", 3);
     timeDelay = settings.getValue("settings:time_delay", 5000);
+    counterDelay = settings.getValue("settings:counter_reset", 1000);
 
     // ~ ~ ~   cam settings   ~ ~ ~
     camSharpness = settings.getValue("settings:sharpness", 0); 
@@ -77,7 +78,7 @@ void ofApp::setup() {
     motionVal = 0;
     counterOn = 0;
     counterOff = 0;
-    markTime = 0;
+    markTriggerTime = 0;
     trigger = false;
     isMoving = false;
 }
@@ -126,21 +127,26 @@ void ofApp::update() {
         std::cout << "val: " << motionVal << " motion: " << isMoving << endl;
    
         int t = ofGetElapsedTimeMillis();
+        
+        if (t > markCounterTime + counterDelay) {
+            counterOn = 0;
+            counterOff = 0;
+        }
 
     	if (!trigger && isMoving) { // motion detected, but not triggered yet
         	if (counterOn < counterMax) { // start counting on frames
         		counterOn++;
+                markCounterTime = t;
         	} else { // trigger on
-                markTime = t;
+                markTriggerTime = t;
 	        	trigger = true;
 	        }  
         } else if (trigger && isMoving) { // reset count and timer as long as motion is detected
-            markTime = t;
-            counterOn = 0;
-            counterOff = 0;
-    	} else if (trigger && !isMoving && t > markTime + timeDelay) {
+            markTriggerTime = t;
+    	} else if (trigger && !isMoving && t > markTriggerTime + timeDelay) {
             if (counterOff < counterMax) { // start counting off frames
                 counterOff++;
+                markCounterTime = t;
             } else { // trigger off
                 curFlow->resetFlow();
                 trigger = false;

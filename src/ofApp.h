@@ -44,7 +44,9 @@ class ofApp : public ofBaseApp {
 
 	    float triggerThreshold;
 	    int timeDelay;
-	    int markTime;
+	    int counterDelay;
+	    int markTriggerTime;
+	    int markCounterTime;
 	    bool trigger;
 	    float motionVal;
 	    glm::vec2 motionValRaw;
