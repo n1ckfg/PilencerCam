@@ -79,7 +79,6 @@ void ofApp::setup() {
 
     motionVal = 0;
     counterOn = 0;
-    counterOff = 0;
     markTriggerTime = 0;
     trigger = false;
     isMoving = false;
