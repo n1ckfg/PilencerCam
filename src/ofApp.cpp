@@ -132,8 +132,6 @@ void ofApp::update() {
         if (motionVal > flowResetThreshold) {
             curFlow->resetFlow();
             trigger = false;
-            counterOn = 0;
-            counterOff = 0;
         }
 
         int t = ofGetElapsedTimeMillis();
@@ -152,8 +150,6 @@ void ofApp::update() {
         	} else { // trigger is ON, reset count and timer
                 markTriggerTime = t;
 	        	trigger = true;
-                counterOn = 0;
-                counterOff = 0;
 	        }  
         } else if (trigger && isMoving) { // keep resetting count and timer as long as motion is detected
             markTriggerTime = t;
@@ -164,8 +160,6 @@ void ofApp::update() {
             } else { // trigger is OFF, reset count and timer
                 curFlow->resetFlow();
                 trigger = false;
-                counterOn = 0;
-                counterOff = 0;
             }  
 
         }
