@@ -1,4 +1,4 @@
-Pilencer is an RPi camera app that sends a start command when it detects motion, and a stop command after a timeout. 
+RPi camera app that sends a 1 over OSC when it detects motion and a 0 after a timeout. Perfect for silencing loud gallery installations.
 Based on the work of @jvcleave and @orgicus. 
 
 Pilencer can use Bonjour (aka Zeroconf) to send OSC without configuring IP addresses.
