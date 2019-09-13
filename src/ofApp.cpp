@@ -37,8 +37,7 @@ void ofApp::setup() {
 
     cam.setup(width, height, false); // color/gray;
 
-    triggerThreshold = settings.getValue("settings:trigger_threshold", 0.5);
-    flowResetThreshold = settings.getValue("settings:flow_reset_threshold", 1.0);
+    triggerThreshold = settings.getValue("settings:trigger_threshold", 5);
     counterMax = settings.getValue("settings:trigger_frames", 3);
     timeDelay = settings.getValue("settings:time_delay", 5000);
     counterDelay = settings.getValue("settings:counter_reset", 1000);
@@ -61,71 +60,52 @@ void ofApp::setup() {
     cam.setShutterSpeed(camShutterSpeed);
     //cam.setFrameRate // not implemented in ofxCvPiCam
 
-    // ~ ~ ~   optical flow settings   ~ ~ ~
-    useFarneback = (bool) settings.getValue("settings:dense_flow", 1);
-    sendMotionInfo = (bool) settings.getValue("settings:send_motion_info", 1);
-    pyrScale = 0.5;   // 0 to 1, default 0.5
-    levels = 4;   // 1 to 8, default 4
-    winsize = 8;   // 4 to 64, default 8
-    iterations = 2;   // 1 to 8, default 2
-    polyN = 7;   // 5 to 10, default 7
-    polySigma = 1.5;   // 1.1 to 2, default 
-    OPTFLOW_FARNEBACK_GAUSSIAN = false; // default false
-    winSize = 32;   // 4 to 64, default 32
-    maxLevel = 3;   // 0 to 8, default 3
-    maxFeatures = 200;   // 1 to 1000, default 200
-    qualityLevel = 0.01;   // 0.001 to 0.02, default 0.01
-    minDistance = 4;   // 1 to 16, default 4
-
     motionVal = 0;
     counterOn = 0;
     markTriggerTime = 0;
     trigger = false;
     isMoving = false;
+
+    numPixels = width * height;
+    backgroundPixels[numPixels];
 }
 
 void ofApp::update() {
     frame = cam.grab();
+    unsigned char * pixels = frame.getPixels();
 
     if (!frame.empty()) {
-        if (useFarneback) {
-			curFlow = &farneback;
-	        farneback.setPyramidScale( pyrScale );
-	        farneback.setNumLevels( levels );
-	        farneback.setWindowSize( winsize );
-	        farneback.setNumIterations( iterations );
-	        farneback.setPolyN( polyN );
-	        farneback.setPolySigma( polySigma );
-	        farneback.setUseGaussian( OPTFLOW_FARNEBACK_GAUSSIAN );
-		} else {
-			curFlow = &pyrLk;
-            pyrLk.setMaxFeatures( maxFeatures );
-            pyrLk.setQualityLevel( qualityLevel );
-            pyrLk.setMinDistance( minDistance );
-            pyrLk.setWindowSize( winSize );
-            pyrLk.setMaxLevel( maxLevel );
-		}
+        // * Background Subtraction by Golan Levin. 
+        // Difference between the current frame and the stored background
+        presenceSum = 0;
+        for (int i = 0; i < numPixels; i++) { // For each pixel in the video frame...
+          // Fetch the current color in that location, and also the color
+          // of the background in that spot
+          color currColor = pixels[i];
+          color bkgdColor = backgroundPixels[i];
+          // Extract the red, green, and blue components of the current pixel's color
+          int currR = (currColor >> 16) & 0xFF;
+          int currG = (currColor >> 8) & 0xFF;
+          int currB = currColor & 0xFF;
+          // Extract the red, green, and blue components of the background pixel's color
+          int bkgdR = (bkgdColor >> 16) & 0xFF;
+          int bkgdG = (bkgdColor >> 8) & 0xFF;
+          int bkgdB = bkgdColor & 0xFF;
+          // Compute the difference of the red, green, and blue values
+          int diffR = abs(currR - bkgdR);
+          int diffG = abs(currG - bkgdG);
+          int diffB = abs(currB - bkgdB);
+          // Add these differences to the running tally
+          presenceSum += diffR + diffG + diffB;
+          // Render the difference image to the screen
+          pixels[i] = color(diffR, diffG, diffB);
+          // The following line does the same thing much faster, but is more technical
+          //pixels[i] = 0xFF000000 | (diffR << 16) | (diffG << 8) | diffB;
+        }
+        cout << presenceSum << endl; // Print out the total amount of movement
 
-        // you use Flow polymorphically
-        curFlow->calcOpticalFlow(frame);
-
-        if (useFarneback) {
-        	motionValRaw = farneback.getAverageFlow();
-    	} else {
-    		motionValRaw = glm::vec2(0,0);
-    		auto points = pyrLk.getMotion();
-
-    		for (int i=0; i<points.size(); i++) {
-    			motionValRaw.x += points[i].x;
-    			motionValRaw.y += points[i].y;
-    		}  
-    		motionValRaw.x /= (float) points.size();
-    		motionValRaw.y /= (float) points.size();
-    	}
-
-        motionVal = (abs(motionValRaw.x) + abs(motionValRaw.y)) / 2.0;
-        isMoving = motionVal > triggerThreshold;
-        std::cout << "val: " << motionVal << " motion: " << isMoving << endl;
+        isMoving = presenceSum > triggerThreshold;
+        std::cout << "val: " << presenceSum << " motion: " << isMoving << endl;
 
         int t = ofGetElapsedTimeMillis();
         
@@ -148,15 +128,11 @@ void ofApp::update() {
         // 3. motion no longer detected
     	} else if (trigger && !isMoving && t > markTriggerTime + timeDelay) {
             trigger = false;
+            // https://stackoverflow.com/questions/16137953/is-there-a-function-to-copy-an-array-in-c-c
+            std::copy(pixels, pixels+numPixels, backgroundPixels);
         }
 
         sendOsc();
-    }
-
-    // optical flow can get stuck in feedback loops
-    if (motionVal > flowResetThreshold) {
-        curFlow->resetFlow();
-        trigger = false;
     }
 }
 
@@ -167,7 +143,6 @@ void ofApp::draw() {
 
         if(!frame.empty()) {
     	    drawMat(frame,0, 0);
-    	    curFlow->draw(0, 0);
     	}
 
         stringstream info;
@@ -186,9 +161,7 @@ void ofApp::sendOsc() {
 
     // if you're only detecting motion, leave this off to save bandwidth
     if (sendMotionInfo) {
-        msg.addFloatArg(motionVal); // total motion, always positive
-        msg.addFloatArg(motionValRaw.x); // x change
-        msg.addFloatArg(motionValRaw.y); // y change
+        msg.addIntArg(presenceSum); // total motion, always positive
     }  
 
     sender.sendMessage(msg);
