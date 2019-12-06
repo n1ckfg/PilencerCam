@@ -10,7 +10,8 @@
     <send_motion_info>0</send_motion_info>
     <!-- * -->
     <!-- trigger settings -->
-    <trigger_threshold>0.0075</trigger_threshold>
+    <trigger_threshold>0.075</trigger_threshold>
+    <trigger_threshold_secondary>0.0075</trigger_threshold_secondary>
     <trigger_frames>3</trigger_frames>
     <time_delay>10000</time_delay>
     <counter_reset>1000</counter_reset>
