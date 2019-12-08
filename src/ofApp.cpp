@@ -37,9 +37,7 @@ void ofApp::setup() {
 
     cam.setup(width, height, false); // color/gray;
 
-    // secondary threshold should be lower
     triggerThreshold = settings.getValue("settings:trigger_threshold", 0.05);
-    triggerThresholdSecondary = settings.getValue("settings:trigger_threshold_secondary", 0.005);
     
     flowResetThreshold = settings.getValue("settings:flow_reset_threshold", 1.0);
     counterMax = settings.getValue("settings:trigger_frames", 3);
@@ -128,11 +126,7 @@ void ofApp::update() {
 
         motionVal = (abs(motionValRaw.x) + abs(motionValRaw.y)) / 2.0;
         
-        if (isMoving) { // if it's already started moving, it's easier to stay moving
-            isMoving = motionVal > triggerThresholdSecondary;
-        } else { // if it's not moving, it's harder to start
-            isMoving = motionVal > triggerThreshold;
-        }
+        isMoving = motionVal > triggerThreshold;
         
         std::cout << "val: " << motionVal << " motion: " << isMoving << endl;
 

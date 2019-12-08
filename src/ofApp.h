@@ -44,7 +44,6 @@ class ofApp : public ofBaseApp {
 	    int minDistance;
 
 	    float triggerThreshold;
-	    float triggerThresholdSecondary;
 	    float flowResetThreshold;
 	    int timeDelay;
 	    int counterDelay;
