@@ -23,9 +23,10 @@ class ofApp : public ofBaseApp {
 		ofxXmlSettings settings;
 
 		ofxCvPiCam cam;
+		cv::Mat frame
+		cv::Scalar diffMean;
 		ofPixels previous;
 		ofImage diff;
-		cv::Scalar diffMean;
 
 		float triggerThreshold;
 		bool sendMotionInfo;

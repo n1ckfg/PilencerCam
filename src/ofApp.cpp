@@ -62,24 +62,26 @@ void ofApp::setup() {
 }
 
 void ofApp::update() {
-    cam.update();
-    if(cam.isFrameNew()) {
-        absdiff(cam, previous, diff);
+    frame = cam.grab();
+    if(!frame.empty()) {
+        absdiff(frame, previous, diff);
         diff.update();   
-        copy(cam, previous);        
+        copy(frame, previous);        
         diffMean = mean(toCv(diff));
         diffMean *= Scalar(50);
     
         diffAvg = (diffMean[0] + diffMean[1] + diffMean[2]) / 3.0;
 
         trigger = diffAvg > triggerThreshold;
+
+        sendOsc();
     }
 }
 
 void ofApp::draw() {   
-    if (debug) {
+    if (frame.empty() && debug) {
         ofSetColor(255);
-        cam.draw(0, 0);
+        drawMat(frame)(0, 0);
         diff.draw(320, 0);      
         
         ofSetColor(255, 255, 0);
