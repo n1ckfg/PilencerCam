@@ -89,7 +89,7 @@ void ofApp::draw() {
         ofSetColor(255);
         ofBackground(0);
 
-        toOf(frame, frameImg)
+        toOf(frame, frameImg);
         frameImg.draw(0, 0);
         diff.draw(width, 0);      
         
