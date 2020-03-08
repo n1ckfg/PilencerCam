@@ -34,6 +34,15 @@ class ofApp : public ofBaseApp {
 		int width, height;
 		bool trigger;
 
+	    int timeDelay;
+	    int counterDelay;
+	    int markTriggerTime;
+	    int markCounterTime;
+	    bool trigger;
+	    bool isMoving;
+	    int counterOn;
+	    int counterMax;
+
 		// for more camera settings, see:
 		// https://github.com/orgicus/ofxCvPiCam/blob/master/example-ofxCvPiCam-allSettings/src/testApp.cpp
 

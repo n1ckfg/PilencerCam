@@ -38,8 +38,14 @@ void ofApp::setup() {
 
     cam.setup(width, height, false); // color/gray;
 
+    counterOn = 0;
+    markTriggerTime = 0;
     trigger = false;
+    isMoving = false;
     triggerThreshold = settings.getValue("settings:trigger_threshold", 0.2);  
+    counterMax = settings.getValue("settings:trigger_frames", 3);
+    timeDelay = settings.getValue("settings:time_delay", 5000);
+    counterDelay = settings.getValue("settings:counter_reset", 1000);
 
     // ~ ~ ~   cam settings   ~ ~ ~
     camSharpness = settings.getValue("settings:sharpness", 0); 
@@ -76,7 +82,30 @@ void ofApp::update() {
     
         diffAvg = (diffMean[0] + diffMean[1] + diffMean[2]) / 3.0;
 
-        trigger = diffAvg > triggerThreshold;
+        isMoving = diffAvg > triggerThreshold;    
+
+        int t = ofGetElapsedTimeMillis();
+        
+        // reset count if too much time has elapsed since the last change
+        if (t > markCounterTime + counterDelay) counterOn = 0;
+
+        // motion detection logic
+        // 1. motion detected, but not triggered yet
+        if (!trigger && isMoving) {
+            if (counterOn < counterMax) { // start counting the ON frames
+                counterOn++;
+                markCounterTime = t;
+            } else { // trigger is ON
+                markTriggerTime = t;
+                trigger = true;
+            }  
+        // 2. motion is triggered
+        } else if (trigger && isMoving) { // keep resetting timer as long as motion is detected
+            markTriggerTime = t;
+        // 3. motion no longer detected
+        } else if (trigger && !isMoving && t > markTriggerTime + timeDelay) {
+            trigger = false;
+        }
 
         sendOsc();
     }
@@ -115,5 +144,5 @@ void ofApp::sendOsc() {
 
     sender.sendMessage(msg);
     
-    cout << "*** SENT: " << trigger << ", " << "diff: " << diffAvg << ", " << "thresh: " << triggerThreshold << " ***" << endl;
+    cout << "*** SENT: " << trigger << " ***" << endl;
 }

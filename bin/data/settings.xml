@@ -9,6 +9,9 @@
     <!-- * -->
     <!-- trigger settings -->
     <trigger_threshold>0.3</trigger_threshold>
+    <trigger_frames>3</trigger_frames>
+    <time_delay>10000</time_delay>
+    <counter_reset>1000</counter_reset>
     <!-- * -->
     <!-- camera settings -->
     <sharpness>50</sharpness>
