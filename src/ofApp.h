@@ -35,6 +35,9 @@ class ofApp : public ofBaseApp {
 		float diffAvg;
 		int width, height;
 		bool trigger;
+		bool lastTrigger;
+		int triggerCounter;
+		int triggerCounterMax;
 
 		// for more camera settings, see:
 		// https://github.com/orgicus/ofxCvPiCam/blob/master/example-ofxCvPiCam-allSettings/src/testApp.cpp

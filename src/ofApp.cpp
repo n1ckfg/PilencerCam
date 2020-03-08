@@ -39,7 +39,11 @@ void ofApp::setup() {
 
     cam.setup(width, height, false); // color/gray;
 
+    trigger = false;
+    lastTrigger = false;
     triggerThreshold = settings.getValue("settings:trigger_threshold", 0.05);  
+    triggerCounter = 0;
+    triggerCounterMax = 3;
 
     // ~ ~ ~   cam settings   ~ ~ ~
     camSharpness = settings.getValue("settings:sharpness", 0); 
@@ -61,6 +65,8 @@ void ofApp::setup() {
 }
 
 void ofApp::update() {
+    lastTrigger = trigger;
+
     frame = cam.grab();
     if(!frame.empty()) {
         if (firstRun) {
@@ -80,7 +86,12 @@ void ofApp::update() {
 
         trigger = diffAvg > triggerThreshold;
 
-        sendOsc();
+        if (trigger == lastTrigger) triggerCounter++;
+
+        if (triggerCounter > triggerCounterMax) {
+            sendOsc();
+            triggerCounter = 0;            
+        }
     }
 }
 
