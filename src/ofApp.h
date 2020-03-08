@@ -32,7 +32,6 @@ class ofApp : public ofBaseApp {
 		float triggerThreshold;
 		float diffAvg;
 		int width, height;
-		bool trigger;
 
 	    int timeDelay;
 	    int counterDelay;
