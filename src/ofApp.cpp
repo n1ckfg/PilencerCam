@@ -82,6 +82,8 @@ void ofApp::update() {
     
         diffAvg = (diffMean[0] + diffMean[1] + diffMean[2]) / 3.0;
 
+        cout << diffAvg << " " << triggerThreshold;
+        
         trigger = diffAvg > triggerThreshold;
 
         if (trigger == lastTrigger) triggerCounter++;
@@ -100,7 +102,11 @@ void ofApp::draw() {
 
         diff.draw(0, 0, ofGetWidth(), ofGetHeight());      
         
-        ofSetColor(255, 0, 0);
+        if (trigger) {
+            ofSetColor(0, 255, 0);
+        } else {
+            ofSetColor(255, 0, 0);
+        }
         ofDrawRectangle(0, 0, triggerThreshold, 10);
         
         if (trigger) {
