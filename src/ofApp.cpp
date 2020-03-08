@@ -144,5 +144,5 @@ void ofApp::sendOsc() {
 
     sender.sendMessage(msg);
     
-    cout << "*** SENT: " << trigger << " ***" << endl;
+    cout << "*** SENT: " << trigger << ", diff/thresh: " << diffAvg << " / " << triggerThreshold << " ***" << endl;
 }
