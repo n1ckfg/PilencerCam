@@ -23,7 +23,6 @@ class ofApp : public ofBaseApp {
 		ofxXmlSettings settings;
 
 		ofxCvPiCam cam;
-		ofVideoGrabber cam;
 		ofPixels previous;
 		ofImage diff;
 		cv::Scalar diffMean;
