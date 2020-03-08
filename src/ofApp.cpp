@@ -85,11 +85,12 @@ void ofApp::update() {
 }
 
 void ofApp::draw() {   
-    ofSetColor(255);
-    ofBackground(0);
-
     if (!frame.empty() && debug) {
-        drawMat(frame)(0, 0);
+        ofSetColor(255);
+        ofBackground(0);
+
+        toOf(frame, frameImg)
+        frameImg.draw(0, 0);
         diff.draw(width, 0);      
         
         ofSetColor(255, 255, 0);
