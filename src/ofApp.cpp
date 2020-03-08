@@ -8,8 +8,8 @@ void ofApp::setup() {
 
     ofSetVerticalSync(false);    
     framerate = settings.getValue("settings:framerate", 60); 
-    width = settings.getValue("settings:width", 320); 
-    height = settings.getValue("settings:height", 240); 
+    width = settings.getValue("settings:width", 160); 
+    height = settings.getValue("settings:height", 120); 
     ofSetFrameRate(framerate);
 
     host = settings.getValue("settings:host", "127.0.0.1"); 
@@ -98,17 +98,17 @@ void ofApp::draw() {
         ofSetColor(255);
         ofBackground(0);
 
-        diff.draw(0, 0);      
+        diff.draw(0, 0, ofGetWidth(), ofGetHeight());      
         
         ofSetColor(255, 0, 0);
-        ofDrawRectangle(0, 0, triggerThreshold*10, 10);
+        ofDrawRectangle(0, 0, triggerThreshold, 10);
         
         if (trigger) {
             ofSetColor(0, 255, 0);
         } else {
             ofSetColor(255, 255, 0);          
         }
-        ofDrawRectangle(0, 10, diffAvg*10, 10);
+        ofDrawRectangle(0, 10, diffAvg, 10);
     }
 }
 
