@@ -82,8 +82,8 @@ void ofApp::update() {
     
         diffAvg = (diffMean[0] + diffMean[1] + diffMean[2]) / 3.0;
 
-        cout << diffAvg << " " << triggerThreshold;
-        
+        cout << diffAvg << " " << triggerThreshold << endl;
+
         trigger = diffAvg > triggerThreshold;
 
         if (trigger == lastTrigger) triggerCounter++;
