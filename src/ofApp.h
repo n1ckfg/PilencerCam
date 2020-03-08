@@ -22,43 +22,16 @@ class ofApp : public ofBaseApp {
 		ofFile file;
 		ofxXmlSettings settings;
 
-		// https://web.archive.org/web/20130520103418/http://opencv.willowgarage.com/documentation/cpp/motion_analysis_and_object_tracking.html
-	    ofxCv::FlowFarneback farneback;
-	    ofxCv::FlowPyrLK pyrLk;
-	    ofxCv::Flow* curFlow;
-	    int width;
-	    int height;
-	    float pyrScale;
-	    int levels;
-	    int winsize;
-	    int iterations;
-	    int polyN;
-	    float polySigma;
-	    bool OPTFLOW_FARNEBACK_GAUSSIAN;
-	    bool useFarneback;
-	    bool sendMotionInfo;
-	    int winSize;
-	    int maxLevel;
-	    int maxFeatures;
-	    float qualityLevel;
-	    int minDistance;
-
-	    float triggerThreshold;
-	    float flowResetThreshold;
-	    int timeDelay;
-	    int counterDelay;
-	    int markTriggerTime;
-	    int markCounterTime;
-	    bool trigger;
-	    float motionVal;
-	    glm::vec2 motionValRaw;
-	    bool isMoving;
-	    int counterOn;
-	    int counterMax;
-
 		ofxCvPiCam cam;
-		cv::Mat frame;
+		ofVideoGrabber cam;
+		ofPixels previous;
+		ofImage diff;
+		cv::Scalar diffMean;
 
+		float triggerThreshold;
+		bool sendMotionInfo;
+		float diffAvg;
+		
 		// for more camera settings, see:
 		// https://github.com/orgicus/ofxCvPiCam/blob/master/example-ofxCvPiCam-allSettings/src/testApp.cpp
 
