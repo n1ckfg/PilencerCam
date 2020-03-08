@@ -61,8 +61,6 @@ void ofApp::setup() {
 }
 
 void ofApp::update() {
-    lastTrigger = trigger;
-
     frame = cam.grab();
     if(!frame.empty()) {
         if (firstRun) {
