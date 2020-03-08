@@ -78,7 +78,6 @@ void ofApp::update() {
         diff.update();   
         copy(frame, previous);        
         diffMean = mean(toCv(diff));
-        diffMean *= Scalar(50);
     
         diffAvg = (diffMean[0] + diffMean[1] + diffMean[2]) / 3.0;
 
@@ -107,14 +106,14 @@ void ofApp::draw() {
         } else {
             ofSetColor(255, 0, 0);
         }
-        ofDrawRectangle(0, 0, triggerThreshold, 10);
+        ofDrawRectangle(0, 0, triggerThreshold*50, 10);
         
         if (trigger) {
             ofSetColor(0, 255, 0);
         } else {
             ofSetColor(255, 255, 0);          
         }
-        ofDrawRectangle(0, 10, diffAvg, 10);
+        ofDrawRectangle(0, 10, diffAvg*50, 10);
     }
 }
 

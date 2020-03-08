@@ -4,7 +4,7 @@
     <port>7110</port>
     <width>160</width>
     <height>120</height>
-    <framerate>90</framerate>
+    <framerate>30</framerate>
     <debug>1</debug>
     <!-- * -->
     <!-- trigger settings -->
