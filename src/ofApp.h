@@ -19,12 +19,13 @@ class ofApp : public ofBaseApp {
 
 		bool debug; // draw to local screen, default true
 		bool firstRun;
-		
+
 		ofFile file;
 		ofxXmlSettings settings;
 
 		ofxCvPiCam cam;
 		cv::Mat frame;
+		ofImage frameImg;
 		cv::Scalar diffMean;
 		ofPixels previous;
 		ofImage diff;

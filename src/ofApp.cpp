@@ -66,6 +66,7 @@ void ofApp::update() {
         if (firstRun) {
             imitate(previous, frame);
             imitate(diff, frame);
+            frameImg.allocate(width, height, OF_IMAGE_COLOR);
             firstRun = false;
         }
 
@@ -84,10 +85,12 @@ void ofApp::update() {
 }
 
 void ofApp::draw() {   
-    if (frame.empty() && debug) {
-        ofSetColor(255);
+    ofSetColor(255);
+    ofBackground(0);
+
+    if (!frame.empty() && debug) {
         drawMat(frame)(0, 0);
-        diff.draw(320, 0);      
+        diff.draw(width, 0);      
         
         ofSetColor(255, 255, 0);
         ofDrawRectangle(0, 0, diffAvg, 10);
