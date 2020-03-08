@@ -16,7 +16,6 @@ void ofApp::setup() {
     port = settings.getValue("settings:port", 7110);
     
     debug = (bool) settings.getValue("settings:debug", 1);
-    sendMotionInfo = (bool) settings.getValue("settings:send_motion_info", 0);
     firstRun = true;
 
     sender.setup(host, port);
@@ -81,7 +80,7 @@ void ofApp::update() {
         diffMean = mean(toCv(diff));
         diffMean *= Scalar(50);
     
-        diffAvg = (diffAvg + ((diffMean[0] + diffMean[1] + diffMean[2]) / 3.0)) / 2.0;
+        diffAvg = (diffMean[0] + diffMean[1] + diffMean[2]) / 3.0;
 
         trigger = diffAvg > triggerThreshold;
 
@@ -102,9 +101,14 @@ void ofApp::draw() {
         diff.draw(0, 0);      
         
         ofSetColor(255, 0, 0);
-        ofDrawRectangle(0, 0, triggerThreshold, 10);
-        ofSetColor(0, 255, 0);
-        ofDrawRectangle(0, 10, diffAvg, 10);
+        ofDrawRectangle(0, 0, triggerThreshold*10, 10);
+        
+        if (trigger) {
+            ofSetColor(0, 255, 0);
+        } else {
+            ofSetColor(255, 255, 0);          
+        }
+        ofDrawRectangle(0, 10, diffAvg*10, 10);
     }
 }
 
@@ -115,11 +119,6 @@ void ofApp::sendOsc() {
     msg.setAddress("/pilencer");
     msg.addStringArg(compname);
     msg.addIntArg((int) trigger);
-
-    // if you're only detecting motion, leave this off to save bandwidth
-    if (sendMotionInfo) {
-        msg.addFloatArg(diffAvg); // total motion, always positive
-    }  
 
     sender.sendMessage(msg);
     std:cout << "*** SENT: " << trigger << " ***\n";

@@ -8,8 +8,7 @@
     <debug>1</debug>
     <!-- * -->
     <!-- trigger settings -->
-    <trigger_threshold>0.5</trigger_threshold>
-    <send_motion_info>1</send_motion_info>
+    <trigger_threshold>0.1</trigger_threshold>
     <!-- * -->
     <!-- camera settings -->
     <sharpness>50</sharpness>

@@ -30,7 +30,6 @@ class ofApp : public ofBaseApp {
 		ofImage diff;
 
 		float triggerThreshold;
-		bool sendMotionInfo;
 		float diffAvg;
 		int width, height;
 		bool trigger;
