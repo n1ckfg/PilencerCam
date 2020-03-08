@@ -76,7 +76,7 @@ void ofApp::update() {
         diffMean = mean(toCv(diff));
         diffMean *= Scalar(50);
     
-        diffAvg = (diffMean[0] + diffMean[1] + diffMean[2]) / 3.0;
+        diffAvg = (diffAvg + (diffMean[0] + diffMean[1] + diffMean[2]) / 3.0) / 2.0;
 
         trigger = diffAvg > triggerThreshold;
 
