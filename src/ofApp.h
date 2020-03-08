@@ -18,7 +18,8 @@ class ofApp : public ofBaseApp {
 		int port; // default 7110;
 
 		bool debug; // draw to local screen, default true
-
+		bool firstRun;
+		
 		ofFile file;
 		ofxXmlSettings settings;
 

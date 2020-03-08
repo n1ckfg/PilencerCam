@@ -17,6 +17,7 @@ void ofApp::setup() {
     
     debug = (bool) settings.getValue("settings:debug", 1);
     sendMotionInfo = (bool) settings.getValue("settings:send_motion_info", 0);
+    firstRun = true;
 
     sender.setup(host, port);
 
@@ -37,8 +38,6 @@ void ofApp::setup() {
     std::cout << compname << endl;
 
     cam.setup(width, height, false); // color/gray;
-    imitate(previous, cam);
-    imitate(diff, cam);
 
     triggerThreshold = settings.getValue("settings:trigger_threshold", 0.05);  
 
@@ -64,6 +63,12 @@ void ofApp::setup() {
 void ofApp::update() {
     frame = cam.grab();
     if(!frame.empty()) {
+        if (firstRun) {
+            imitate(previous, frame);
+            imitate(diff, frame);
+            firstRun = false;
+        }
+
         absdiff(frame, previous, diff);
         diff.update();   
         copy(frame, previous);        
