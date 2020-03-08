@@ -7,9 +7,9 @@ void ofApp::setup() {
     settings.loadFile("settings.xml");
 
     ofSetVerticalSync(false);    
-    framerate = settings.getValue("settings:framerate", 60); 
-    width = settings.getValue("settings:width", 320); 
-    height = settings.getValue("settings:height", 240); 
+    framerate = settings.getValue("settings:framerate", 30); 
+    width = settings.getValue("settings:width", 160); 
+    height = settings.getValue("settings:height", 120); 
     ofSetFrameRate(framerate);
 
     host = settings.getValue("settings:host", "127.0.0.1"); 
@@ -39,10 +39,7 @@ void ofApp::setup() {
     cam.setup(width, height, false); // color/gray;
 
     trigger = false;
-    lastTrigger = false;
     triggerThreshold = settings.getValue("settings:trigger_threshold", 0.2);  
-    triggerCounter = 0;
-    triggerCounterMax = 3;
 
     // ~ ~ ~   cam settings   ~ ~ ~
     camSharpness = settings.getValue("settings:sharpness", 0); 
@@ -83,12 +80,7 @@ void ofApp::update() {
 
         trigger = diffAvg > triggerThreshold;
 
-        if (trigger == lastTrigger) triggerCounter++;
-
-        if (triggerCounter > triggerCounterMax) {
-            sendOsc();
-            triggerCounter = 0;            
-        }
+        sendOsc();
     }
 }
 

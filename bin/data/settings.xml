@@ -2,13 +2,13 @@
 <settings>
     <host>BrazilV.local</host>
     <port>7110</port>
-    <width>320</width>
-    <height>240</height>
-    <framerate>60</framerate>
+    <width>160</width>
+    <height>120</height>
+    <framerate>30</framerate>
     <debug>1</debug>
     <!-- * -->
     <!-- trigger settings -->
-    <trigger_threshold>0.2</trigger_threshold>
+    <trigger_threshold>0.3</trigger_threshold>
     <!-- * -->
     <!-- camera settings -->
     <sharpness>50</sharpness>
