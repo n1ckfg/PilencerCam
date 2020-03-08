@@ -8,8 +8,8 @@ void ofApp::setup() {
 
     ofSetVerticalSync(false);    
     framerate = settings.getValue("settings:framerate", 60); 
-    width = settings.getValue("settings:width", 160); 
-    height = settings.getValue("settings:height", 120); 
+    width = settings.getValue("settings:width", 320); 
+    height = settings.getValue("settings:height", 240); 
     ofSetFrameRate(framerate);
 
     host = settings.getValue("settings:host", "127.0.0.1"); 
@@ -40,7 +40,7 @@ void ofApp::setup() {
 
     trigger = false;
     lastTrigger = false;
-    triggerThreshold = settings.getValue("settings:trigger_threshold", 0.05);  
+    triggerThreshold = settings.getValue("settings:trigger_threshold", 0.2);  
     triggerCounter = 0;
     triggerCounterMax = 3;
 
@@ -81,8 +81,6 @@ void ofApp::update() {
     
         diffAvg = (diffMean[0] + diffMean[1] + diffMean[2]) / 3.0;
 
-        cout << diffAvg << " " << triggerThreshold << endl;
-
         trigger = diffAvg > triggerThreshold;
 
         if (trigger == lastTrigger) triggerCounter++;
@@ -106,14 +104,14 @@ void ofApp::draw() {
         } else {
             ofSetColor(255, 0, 0);
         }
-        ofDrawRectangle(0, 0, triggerThreshold*50, 10);
+        ofDrawRectangle(0, 0, triggerThreshold*100, 10);
         
         if (trigger) {
             ofSetColor(0, 255, 0);
         } else {
             ofSetColor(255, 255, 0);          
         }
-        ofDrawRectangle(0, 10, diffAvg*50, 10);
+        ofDrawRectangle(0, 10, diffAvg*100, 10);
     }
 }
 
@@ -126,5 +124,6 @@ void ofApp::sendOsc() {
     msg.addIntArg((int) trigger);
 
     sender.sendMessage(msg);
-    std:cout << "*** SENT: " << trigger << " ***\n";
+    
+    cout << "*** SENT: " << trigger << ", " << "diff: " << diffAvg << ", " << "thresh: " << triggerThreshold << " ***" << endl;
 }
