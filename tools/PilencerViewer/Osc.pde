@@ -14,7 +14,7 @@ void oscSetup() {
 
 // Receive message example
 void oscEvent(OscMessage msg) {
-  if (msg.checkAddrPattern("/pilencer") && msg.checkTypetag("sif")) {
+  if (msg.checkAddrPattern("/pilencer") && msg.checkTypetag("si")) {
     
     //String hostname = msg.get(0).stringValue();
     trigger = boolean(msg.get(1).intValue());
