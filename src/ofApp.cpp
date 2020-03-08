@@ -72,7 +72,6 @@ void ofApp::update() {
         if (firstRun) {
             imitate(previous, frame);
             imitate(diff, frame);
-            frameImg.allocate(width, height, OF_IMAGE_COLOR);
             firstRun = false;
         }
 
@@ -100,11 +99,11 @@ void ofApp::draw() {
         ofSetColor(255);
         ofBackground(0);
 
-        toOf(frame, frameImg);
-        frameImg.draw(0, 0);
-        diff.draw(width, 0);      
+        diff.draw(0, 0);      
         
-        ofSetColor(255, 255, 0);
+        ofSetColor(255, 0, 0);
+        ofDrawRectangle(0, 0, triggerThreshold, 10);
+        ofSetColor(0, 255, 0);
         ofDrawRectangle(0, 0, diffAvg, 10);
     }
 }

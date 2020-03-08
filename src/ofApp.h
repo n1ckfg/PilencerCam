@@ -25,7 +25,6 @@ class ofApp : public ofBaseApp {
 
 		ofxCvPiCam cam;
 		cv::Mat frame;
-		ofImage frameImg;
 		cv::Scalar diffMean;
 		ofPixels previous;
 		ofImage diff;
