@@ -30,7 +30,9 @@ class ofApp : public ofBaseApp {
 		float triggerThreshold;
 		bool sendMotionInfo;
 		float diffAvg;
-		
+		int width, height;
+		bool trigger;
+
 		// for more camera settings, see:
 		// https://github.com/orgicus/ofxCvPiCam/blob/master/example-ofxCvPiCam-allSettings/src/testApp.cpp
 

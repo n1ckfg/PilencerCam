@@ -16,7 +16,7 @@ void ofApp::setup() {
     port = settings.getValue("settings:port", 7110);
     
     debug = (bool) settings.getValue("settings:debug", 1);
-    sendMotionInfo = (bool) settings.getValue("settings:sendMotionInfo", 0);
+    sendMotionInfo = (bool) settings.getValue("settings:send_motion_info", 0);
 
     sender.setup(host, port);
 
@@ -59,9 +59,6 @@ void ofApp::setup() {
     cam.setExposureCompensation(camExposureCompensation);
     cam.setShutterSpeed(camShutterSpeed);
     //cam.setFrameRate // not implemented in ofxCvPiCam
-
-    // ~ ~ ~   optical flow settings   ~ ~ ~
-    isMoving = false;
 }
 
 void ofApp::update() {
@@ -75,7 +72,7 @@ void ofApp::update() {
     
         diffAvg = (diffMean[0] + diffMean[1] + diffMean[2]) / 3.0;
 
-        trigger = diffAvg > trigger_threshold;
+        trigger = diffAvg > triggerThreshold;
     }
 }
 
@@ -100,7 +97,7 @@ void ofApp::sendOsc() {
 
     // if you're only detecting motion, leave this off to save bandwidth
     if (sendMotionInfo) {
-        msg.addFloatArg(motionVal); // total motion, always positive
+        msg.addFloatArg(diffAvg); // total motion, always positive
     }  
 
     sender.sendMessage(msg);
